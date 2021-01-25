@@ -1,0 +1,8 @@
+# Default ignored files
+/shelf/
+workspace.xml
+.vscode/
+Pipfile.lock
+__pycache__/
+.idea/
+.cache
