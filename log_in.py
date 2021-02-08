@@ -1,14 +1,22 @@
+""" Using authorization code flow so that we can access user information.
+To keep secrets out of the code, they should be set as environment variables.
+Spotipy uses three environment variables for authentication with authorization code flow:
+* SPOTIPY_CLIENT_ID
+* SPOTIPY_CLIENT_SECRET
+* SPOTIPY_REDIRECT_URI
+"""
+import os
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from CLIENT_SECRET import CLIENT_SECRET
 
-scopes = "playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative"
 
-def get_Oauth(scope):
-    redirect_url = "http://127.0.0.1:9090"
-    # client
-    Spotify_Oauth = SpotifyOAuth(client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=redirect_url,scope=scope)
-    return Spotify_Oauth
-
-sp = spotipy.Spotify(auth_manager=get_Oauth(scope=scopes))
-
+def log_in():
+    # The permissions we want to request from Spotify
+    scopes = (
+        "playlist-modify-public"
+        "playlist-modify-private"
+        "playlist-read-private"
+        "playlist-read-collaborative"
+    )
+    sp_session = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scopes))
+    return sp_session

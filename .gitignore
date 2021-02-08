@@ -6,3 +6,4 @@ Pipfile.lock
 __pycache__/
 .idea/
 .cache
+.env

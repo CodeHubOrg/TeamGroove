@@ -10,6 +10,7 @@ black = "*"
 [packages]
 requests = "*"
 spotipy = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"

@@ -4,7 +4,10 @@
 #	Reorder a Playlist's Items
 import requests
 import json
+from dotenv import load_dotenv
 
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
 def get_playlists():
     # token needed here
@@ -32,6 +35,14 @@ def get_playlist_id(user_choice):
     # print(f"playlist id {playlist['id']}")
     print(f"Chosen playlist = {playlist['name']}")
 
+load_dotenv()
 
-get_playlist_names()
-get_playlist_id(input("Choose number"))
+scope = "user-library-read"
+
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+b_jaxx_urn = "https://open.spotify.com/artist/4YrKBkKSVeqDamzBPWVnSJ"
+artist = sp.artist(b_jaxx_urn)
+print(artist)
+
+# get_playlist_names()
+# get_playlist_id(input("Choose number"))
