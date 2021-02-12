@@ -1,0 +1,28 @@
+"""
+{
+    Name: "Playlist name",
+    Playlist ID: "Playlist ID",
+    Playlist Creator:
+        {
+            Name : "name",
+            ID : "ID"
+        }
+    Playlist Tracks: [
+        {
+            track01:
+                {
+                    name:"name",
+                    ID:"ID",
+                    Added by:
+                        {
+                            ID:"user ID",
+                            name:"name",
+                            datetime:"datetime"
+                        }
+                    Average_star_rat : "4.5",
+                    Average_score_chance : "0.94",
+                    Votes : "5"
+                }
+        }
+    ]
+}
