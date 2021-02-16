@@ -1,5 +1,6 @@
-# log in
 # Create TeamGroove user DB
+from dotenv import load_dotenv
+from log_in import log_in
 
 
 """options"""
@@ -10,10 +11,14 @@
 """Create new Teamgroove playlist"""
 # List trough current users colab playlists
 # Check playlist ID against TeamGroove playlists
-    # if already in use, suggest joining it.
+# if already in use, suggest joining it.
 # Create Teamgroove playlist database
 
 
-from log_in import sp
+def main():
+    load_dotenv()
+    log_in()
 
 
+if __name__ == "__main__":
+    main()
