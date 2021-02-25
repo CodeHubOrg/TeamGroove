@@ -22,7 +22,7 @@ def main():
     execute_from_command_line(sys.argv)
 
 
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+
 if __name__ == "__main__":
     main()
-
-dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
