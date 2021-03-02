@@ -73,7 +73,7 @@ to clone Team Groove using
 is:
 
 ``` bash
-    git clone git@github.com:CodeHubOrg/TeamGroove.git
+git clone git@github.com:CodeHubOrg/TeamGroove.git
 ```
 
 To clone Team Groove using
@@ -92,7 +92,7 @@ on the Poetry site. When you have Poetry installed, you can run the command
 below to install the modules required for Team Groove.
 
 ``` bash
-    poetry install
+poetry install
 ```
 
 This command creates a virtual environment and installs the modules used to run
@@ -117,7 +117,7 @@ To generate a `SECRET_KEY` for Django you can run this command on the command
 line:
 
 ``` bash
-    python manage.py shell -c 'from django.core.management import utils; 
+python manage.py shell -c 'from django.core.management import utils; 
     print(utils.get_random_secret_key())'
 ```
 
@@ -133,7 +133,7 @@ command-line once you've installed the necessary modules by running the command
 below from the project directory of Team Groove
 
 ``` bash
-    python manage.py runserver
+python manage.py runserver
 ```
 
 This starts up the bundled Django web server so you should be able to see the
