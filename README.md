@@ -71,7 +71,11 @@ you'll need access to git. If you're using git on the command-line the command
 to clone Team Groove using
 [SSH](https://docs.github.com/en/github/using-git/which-remote-url-should-i-use#cloning-with-ssh-urls)
 is:
+
+``` bash
     git clone git@github.com:CodeHubOrg/TeamGroove.git
+```
+
 To clone Team Groove using
 [HTTPS](https://docs.github.com/en/github/using-git/which-remote-url-should-i-use#cloning-with-https-urls),
 use:
@@ -86,7 +90,11 @@ If you don't have Poetry installed, please follow
 [the instructions](https://python-poetry.org/docs/#installation)
 on the Poetry site. When you have Poetry installed, you can run the command
 below to install the modules required for Team Groove.
+
+``` bash
     poetry install
+```
+
 This command creates a virtual environment and installs the modules used to run
 Team Groove, including:
 
@@ -107,7 +115,12 @@ editor. You'll see there are some fields that need populating.
 
 To generate a `SECRET_KEY` for Django you can run this command on the command
 line:
-    python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
+
+``` bash
+    python manage.py shell -c 'from django.core.management import utils; 
+    print(utils.get_random_secret_key())'
+```
+
 You can copy and paste the string generated into you `.env` file.
 
 If you wish to Team Groove with Spotify you will need to set up a developer
@@ -118,6 +131,10 @@ Team Groove uses [Django](https://www.djangoproject.com/) which comes complete
 with a simple web server. This means you can try running Team Groove direct from
 command-line once you've installed the necessary modules by running the command
 below from the project directory of Team Groove
+
+``` bash
     python manage.py runserver
+```
+
 This starts up the bundled Django web server so you should be able to see the
 site running.
