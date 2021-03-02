@@ -117,8 +117,7 @@ To generate a `SECRET_KEY` for Django you can run this command on the command
 line:
 
 ``` bash
-python manage.py shell -c 'from django.core.management import utils; 
-    print(utils.get_random_secret_key())'
+python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
 ```
 
 You can copy and paste the string generated into you `.env` file.
