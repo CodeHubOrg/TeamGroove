@@ -110,17 +110,29 @@ and catching errors.
 ### 4. Run Team Groove locally
 
 To be able to start Team Groove running, you'll need a set up some environment
-variables. Copy the `.env.example` file to `.env` and open it in your preferred
-editor. You'll see there are some fields that need populating.
+variables. Copy the `.env.example` file to a new file in the same directory
+called`.env` and open it in your preferred editor. You'll see there are some
+fields that need populating.
 
-To generate a `SECRET_KEY` for Django you can run this command on the command
-line:
+But first, as we're going to be running several commands, let's switch to the
+newly created virtual environment by running this command on the command line:
 
 ``` bash
-python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
+> poetry shell
 ```
 
-You can copy and paste the string generated into you `.env` file.
+If you've successfully switched to the virtual environment, your command-line
+prompt should now include the name of the virtual environment.
+
+To generate a new `SECRET_KEY` for Django you can now run a Python command on
+the command line:
+
+``` bash
+> python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
+```
+
+You can copy and paste the string generated into your `.env` file as the value
+for the SECRET_KEY key.
 
 If you wish to Team Groove with Spotify you will need to set up a developer
 account with Spotify so you can generate a API key and secret. You can log in or
@@ -129,10 +141,18 @@ create a new account [here](https://developer.spotify.com/dashboard/).
 Team Groove uses [Django](https://www.djangoproject.com/) which comes complete
 with a simple web server. This means you can try running Team Groove direct from
 command-line once you've installed the necessary modules by running the command
-below from the project directory of Team Groove
+below from the project directory of Team Groove. If you're already running a
+shell in the virtual environment then just use this command:
 
 ``` bash
 python manage.py runserver
+```
+
+If you're not already running a shell in the virtual environment you can run
+this command instead:
+
+``` bash
+poetry run python manage.py runserver
 ```
 
 This starts up the bundled Django web server so you should be able to see the
