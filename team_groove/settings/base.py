@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Use custom user model rather than built in user
+AUTH_USER_MODEL = 'cuser.CustomUser'
 
 # Application definition
 
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "core",
+    "cuser",
 ]
 
 MIDDLEWARE = [
@@ -99,6 +102,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+        {
+        'NAME': 'cuser.validators.MaximumLengthValidator',
+            'OPTIONS': {
+                'max_length': 200, }
     },
 ]
 
