@@ -107,7 +107,7 @@ code formatter to keep our code style consistent.
 * [Pylint](https://pylint.org/) - a static code analysis tool for refactoring
 and catching errors.
 
-### 4. Run Team Groove locally
+### 4. Set up local environment variables
 
 To be able to start Team Groove running, you'll need a set up some environment
 variables. Copy the `.env.example` file to a new file in the same directory
@@ -138,11 +138,33 @@ If you wish to Team Groove with Spotify you will need to set up a developer
 account with Spotify so you can generate a API key and secret. You can log in or
 create a new account [here](https://developer.spotify.com/dashboard/).
 
+### 5. Apply changes to the local database
+
+Django handles creating and updating the database schema, but before you can run
+Team Groove, you will need to apply any outstanding changes to your local
+database. If you're already running a shell in the virtual environment then you
+can use this command:
+
+``` bash
+python manage.py migrate
+```
+
+If you're not already running a shell in the virtual environment you can prefix
+the command above with `poetry run`:
+
+``` bash
+poetry run python manage.py migrate
+```
+
+This creates a database if necessary and then applies the current schema.
+
+### 6. Run Team Groove locally
+
 Team Groove uses [Django](https://www.djangoproject.com/) which comes complete
 with a simple web server. This means you can try running Team Groove direct from
-command-line once you've installed the necessary modules by running the command
-below from the project directory of Team Groove. If you're already running a
-shell in the virtual environment then just use this command:
+command-line by running the command below from the project directory of Team
+Groove. If you're already running a shell in the virtual environment then just
+use this command:
 
 ``` bash
 python manage.py runserver
