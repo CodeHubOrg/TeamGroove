@@ -136,4 +136,4 @@ workspace.xml
 
 # Poetry
 poetry.lock
-users/migrations/0001_initial.py
+
