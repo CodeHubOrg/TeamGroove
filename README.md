@@ -73,7 +73,7 @@ to clone Team Groove using
 is:
 
 ``` bash
-git clone git@github.com:CodeHubOrg/TeamGroove.git
+> git clone git@github.com:CodeHubOrg/TeamGroove.git
 ```
 
 To clone Team Groove using
@@ -81,7 +81,7 @@ To clone Team Groove using
 use:
 
 ``` bash
-git clone https://github.com/CodeHubOrg/TeamGroove.git
+> git clone https://github.com/CodeHubOrg/TeamGroove.git
 ```
 
 ### 3. Install package dependencies
@@ -128,7 +128,7 @@ To generate a new `SECRET_KEY` for Django you can now run a Python command on
 the command line:
 
 ``` bash
-> python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
+> echo 'from django.core.management import utils; print(utils.get_random_secret_key())' | python
 ```
 
 You can copy and paste the string generated into your `.env` file as the value
@@ -167,14 +167,14 @@ Groove. If you're already running a shell in the virtual environment then just
 use this command:
 
 ``` bash
-python manage.py runserver
+> python manage.py runserver
 ```
 
 If you're not already running a shell in the virtual environment you can run
 this command instead:
 
 ``` bash
-poetry run python manage.py runserver
+> poetry run python manage.py runserver
 ```
 
 This starts up the bundled Django web server so you should be able to see the
