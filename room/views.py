@@ -79,6 +79,7 @@ def invite(request):
 
     return render(request, 'invite.html', {'room': room, 'form': form})
 
+@login_required
 def send_invitation(to_email, code, room):
     from_email = settings.DEFAULT_EMAIL_FROM
     accept_url = settings.INVITE_ACCEPT_URL
@@ -91,6 +92,7 @@ def send_invitation(to_email, code, room):
     msg.attach_alternative(html_content, 'text/html')
     msg.send()
 
+@login_required
 def send_invitation_accepted(room, invitation):
     from_email = settings.DEFAULT_EMAIL_FROM
     subject = 'Invitation accepted'
