@@ -115,7 +115,10 @@
                             {% endif %}</p>
                             <hr>
                         </div>
-                        <a href="{% url 'activate_room' room.id %}" class="btn btn-success mt-2 btn-block">Activate</a>
+                        <a href="{% url 'activate_room' room.id %}" class="btn btn-success mt-2 btn-block">Activate Room</a>
+                        {% if room.created_by == request.user %}
+                            <a href="{% url 'delete_room' room.id %}" class="btn btn-danger mt-2 btn-block">Delete Room</a>
+                        {% endif %}
                     </div>
                 </div>
 

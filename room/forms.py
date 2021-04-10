@@ -10,7 +10,7 @@ class AddRoom(forms.ModelForm):
         fields = {'title',}
 
 class EmailInvite(forms.Form):
-    email = forms.EmailField(label='E-mail of new team member:', max_length=255)
+    email = forms.EmailField(label='E-mail of new Groover:', max_length=255)
 
 class AcceptInvitation(forms.Form):
     code = forms.CharField(label='Enter the code from the invitation email:', max_length=20)

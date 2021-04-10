@@ -109,7 +109,6 @@ def accept_invitation(request):
         form = AcceptInvitation(request.POST)
 
         if form.is_valid():
-
             code = request.POST.get('code')
 
             invitations = Invitation.objects.filter(code=code, email=request.user.email)
@@ -151,13 +150,20 @@ def edit_room(request):
             title = request.POST.get('title')
 
             if title:
-
                 room.title = title
                 room.save()
                 messages.info(request, "Your changes were saved.")
 
                 return redirect('room', room_id=room.id)
     else:
-
         form = EditRoom()
-    return render(request, 'edit.html', {'form': form})
+    return render(request, 'edit_room.html', {'form': form})
+
+@login_required
+def delete_room(request, room_id):
+    room = get_object_or_404(Room, pk=room_id, created_by=request.user)
+    room.delete()
+    
+    messages.info(request, "Your room was deleted.")
+
+    return redirect('grooveboard')
