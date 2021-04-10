@@ -58,9 +58,9 @@
     <h5>Room Owner Actions:</h5>
     <hr>
         <div class="col-4">
-            <a href="#" class="btn btn-primary btn-block">Edit Team Name</a>
+            <a href="{% url 'edit_room' %}" class="btn btn-primary btn-block">Edit Room Name</a>
             <hr>
-            <a href="#" class="btn btn-secondary btn-block">Email Invite to Join Team</a>            
+            <a href="{% url 'room' active_room.id %}" class="btn btn-secondary btn-block"> Invite Groovers to Join Your Room</a>            
         </div>
 {% endif %}
 

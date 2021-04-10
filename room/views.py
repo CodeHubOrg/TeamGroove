@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-from .forms import AddRoom, EmailInvite, AcceptInvitation
+from .forms import AddRoom, EmailInvite, AcceptInvitation, EditRoom
 from .models import Room, Invitation
 
 
@@ -139,3 +139,25 @@ def accept_invitation(request):
     else:
         form = AcceptInvitation()
     return render(request, 'accept_invitation.html', {'form': form})
+
+@login_required
+def edit_room(request):
+    room = get_object_or_404(Room, pk=request.user.active_room_id, status=Room.ACTIVE, members__in=[request.user])
+
+    if request.method == 'POST':
+        form = EditRoom(request.POST)
+
+        if form.is_valid():
+            title = request.POST.get('title')
+
+            if title:
+
+                room.title = title
+                room.save()
+                messages.info(request, "Your changes were saved.")
+
+                return redirect('room', room_id=room.id)
+    else:
+
+        form = EditRoom()
+    return render(request, 'edit.html', {'form': form})

@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 from core.views import FrontPageView
 from users.views import signup
 from grooveboard.views import grooveboard
-from room.views import add_room, activate_room, room, invite, accept_invitation
+from room.views import add_room, activate_room, room, invite, accept_invitation, edit_room
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,7 @@ urlpatterns = [
     path('room/activate_room/<int:room_id>/', activate_room, name='activate_room'),
     path('room/<int:room_id>/', room, name='room'),
     path('room/invite/', invite, name='invite'),
+    path('room/edit_room/', edit_room, name='edit_room'),
     path('room/accept_invitation/', accept_invitation, name='accept_invitation'),
 
     path('signup/', signup, name='signup'),
