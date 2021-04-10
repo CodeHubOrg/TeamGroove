@@ -60,7 +60,9 @@
         <div class="col-4">
             <a href="{% url 'edit_room' %}" class="btn btn-primary btn-block">Edit Room Name</a>
             <hr>
-            <a href="{% url 'room' active_room.id %}" class="btn btn-secondary btn-block"> Invite Groovers to Join Your Room</a>            
+            {% if active_room.created_by == request.user %}
+                <a href="{% url 'invite' %}" class="btn btn-secondary btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> Invite Groovers to Join Your Room</a>
+            {% endif %}
         </div>
 {% endif %}
 
