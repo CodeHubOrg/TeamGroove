@@ -42,6 +42,9 @@ INSTALLED_APPS = [
 
     "core",
     "users",
+    "grooveboard",
+    "room",
+    "spotify",
 ]
 
 MIDDLEWARE = [
@@ -67,6 +70,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'room.context_processors.active_room',
             ],
         },
     },
@@ -132,3 +136,7 @@ STATIC_URL = "/static/"
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'grooveboard'
 LOGOUT_REDIRECT_URL = 'frontpage'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_EMAIL_FROM = 'teamgroove@example.com'
+INVITE_ACCEPT_URL = '127.0.0.1:8000'

@@ -18,6 +18,7 @@ class CustomUserAdmin(UserAdmin):
         "last_name",
         "is_staff",
         "is_active",
+        "active_room_id",
     )
     list_filter = (
         "email",
@@ -25,10 +26,11 @@ class CustomUserAdmin(UserAdmin):
         "last_name",
         "is_staff",
         "is_active",
+        "active_room_id",
     )
     fieldsets = (
         (None, {"fields": ("email", "password", "first_name", "last_name")}),
-        ("Permissions", {"fields": ("is_staff", "is_active")}),
+        ("Permissions", {"fields": ("is_staff", "is_active", "active_room_id",)}),
     )
     add_fieldsets = (
         (
@@ -43,6 +45,7 @@ class CustomUserAdmin(UserAdmin):
                     "last_name",
                     "is_staff",
                     "is_active",
+                    "active_room_id",
                 ),
             },
         ),

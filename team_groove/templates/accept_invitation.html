@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Accept Invitation | {% endblock %}
+
+{% block content %}
+
+<div class="jumbotron mt-3">
+    <h2 class="display-4">Accept Invitation</h2>
+
+    <form method="post" action=".">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Submit Activation Code</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Invite to Room | {% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="media">
+            <img class="mr-3">
+            <div class="media-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-8">
+        <h1 class="title">Invite a Groover To Join Your Room</h1>            
+        <form method="post" action=".">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Send Email Invitation</button>
+        </form>            
+    </div>
+</div>
+{% endblock %}
