@@ -15,7 +15,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_("date joined"), auto_now_add=True)
     is_active = models.BooleanField(_("active"), default=True)
     is_staff = models.BooleanField(default=False)    
-    active_room_id = models.IntegerField(default=0)
 
     objects = CustomUserManager()
 
@@ -34,10 +33,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
         full_name = f'{self.first_name} {self.last_name}'
         return full_name.strip()
-    
-    def get_active_room_id(self):
-        
-        return self.active_room_id
 
     def get_short_name(self):
 
