@@ -62,7 +62,7 @@
             <hr>
             {% if active_room.created_by == request.user %}
                 <a href="{% url 'invite' %}" class="btn btn-secondary btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> Invite Groovers to Join Your Room</a>
-                <a href="#" class="btn btn-success btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> Create a Playlist for Your Room</a>
+                <a href="{% url 'authorize_with_spotify' %}" class="btn btn-success btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> View Your Spotify Playlists</a>
             {% endif %}
         </div>
 {% endif %}

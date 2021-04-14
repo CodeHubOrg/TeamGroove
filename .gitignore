@@ -137,3 +137,5 @@ workspace.xml
 # Poetry
 poetry.lock
 
+# Stop your Spotify Token getting copied to git
+.spotify_caches/
