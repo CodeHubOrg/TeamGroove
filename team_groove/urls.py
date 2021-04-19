@@ -22,6 +22,8 @@ from users.views import signup
 from grooveboard.views import grooveboard
 from room.views import add_room, activate_room, room, invite, accept_invitation, edit_room, delete_room
 
+from spotify.views import authorize_with_spotify
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', FrontPageView.as_view(), name='frontpage'),
@@ -33,6 +35,11 @@ urlpatterns = [
     path('room/edit_room/', edit_room, name='edit_room'),
     path('room/delete_room/<int:room_id>/', delete_room, name='delete_room'),
     path('room/accept_invitation/', accept_invitation, name='accept_invitation'),
+
+    path('spotify/authorize_with_spotify/<spotify_code>', authorize_with_spotify, name='authorize_with_spotify'),
+    path('spotify/authorize_with_spotify/', authorize_with_spotify, name='authorize_with_spotify'),
+    
+    
 
     path('signup/', signup, name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
