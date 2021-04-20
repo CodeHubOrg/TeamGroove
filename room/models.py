@@ -37,7 +37,7 @@ class Invitation(models.Model):
     room = models.ForeignKey(Room, related_name='invitations', on_delete=models.CASCADE)
     email = models.EmailField()
     # Need to generate some sort of random code so we can authenticate who got the invite
-    code = models.CharField(max_length=20)
+    invitation_code = models.CharField(max_length=20)
     status = models.CharField(max_length=20, choices=CHOICES_STATUS, default=INVITED)
     date_sent = models.DateTimeField(auto_now_add=True)
 

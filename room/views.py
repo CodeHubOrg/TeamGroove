@@ -64,12 +64,12 @@ def invite(request):
                 
                 if not invitations:
                     # erm, kind of random but just want to get it working
-                    code = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz123456789') for i in range(9))
-                    invitation = Invitation.objects.create(room=room, email=email, code=code)
+                    invitation_code = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz123456789') for i in range(9))
+                    invitation = Invitation.objects.create(room=room, email=email, invitation_code=invitation_code)
 
                     messages.info(request, 'Your new Groover at: ' + email +  ' was invited')
                     
-                    send_invitation(email, code, room)
+                    send_invitation(email, invitation_code, room)
 
                     return redirect('room', room_id=room.id)
                 else:
@@ -80,13 +80,13 @@ def invite(request):
     return render(request, 'invite.html', {'room': room, 'form': form})
 
 
-def send_invitation(to_email, code, room):
+def send_invitation(to_email, invitation_code, room):
     from_email = settings.DEFAULT_EMAIL_FROM
     accept_url = settings.INVITE_ACCEPT_URL
     
     subject = 'Invitation to use TeamGroove'
-    text_content = 'Invitation to use TeamGroove service. Your code is: %s' % code
-    html_content = render_to_string('email_invitation.html', {'code': code, 'room': room, 'accept_url': accept_url})
+    text_content = 'Invitation to use TeamGroove service. Your code is: %s' % invitation_code
+    html_content = render_to_string('email_invitation.html', {'invitation_code': invitation_code, 'room': room, 'accept_url': accept_url})
 
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
     msg.attach_alternative(html_content, 'text/html')
@@ -109,9 +109,9 @@ def accept_invitation(request):
         form = AcceptInvitation(request.POST)
 
         if form.is_valid():
-            code = request.POST.get('code')
+            invitation_code = request.POST.get('invitation_code')
 
-            invitations = Invitation.objects.filter(code=code, email=request.user.email)
+            invitations = Invitation.objects.filter(invitation_code=invitation_code, email=request.user.email)
 
             if invitations:
                 invitation = invitations[0]
