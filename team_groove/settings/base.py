@@ -140,3 +140,7 @@ LOGOUT_REDIRECT_URL = 'frontpage'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_EMAIL_FROM = 'teamgroove@example.com'
 INVITE_ACCEPT_URL = '127.0.0.1:8000'
+
+# Added this as we started the project with 3.1 and as we are now using 3.2 it isn't added in by
+# default and it gets rid of the stupid warning when you use python manage.py runserver
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
