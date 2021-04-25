@@ -17,6 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
+from rest_framework.urlpatterns import format_suffix_patterns
+
+from cli_api.views import LogIn, SignUp
+
 from core.views import FrontPageView
 from users.views import signup
 from grooveboard.views import grooveboard
@@ -39,6 +43,8 @@ urlpatterns = [
     path('spotify/authorize_with_spotify/<spotify_code>', authorize_with_spotify, name='authorize_with_spotify'),
     path('spotify/authorize_with_spotify/', authorize_with_spotify, name='authorize_with_spotify'),
     
+    path('v1/cli_api/signup/', SignUp.as_view(), name='cli-signup'),
+    path('v1/cli_api/login/', LogIn.as_view(), name='cli-login'),
     
 
     path('signup/', signup, name='signup'),
