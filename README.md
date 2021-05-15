@@ -99,7 +99,7 @@ This command creates a virtual environment and installs the modules used to run
 Team Groove, including:
 
 * [Django](https://www.djangoproject.com/) - the web framework
-* [Spotipy](https://spotipy.readthedocs.io/en/2.9.0/) - library for interacting
+* [Spotipy](https://spotipy.readthedocs.io/en/2.18.0/) - library for interacting
 with the Spotify Web API. This will also install modules we're using for
 developing Team Groove, but are not required for running the application.
 * [Black](https://black.readthedocs.io/en/stable/) - an "uncomprimising" Python
@@ -124,11 +124,36 @@ newly created virtual environment by running this command on the command line:
 If you've successfully switched to the virtual environment, your command-line
 prompt should now include the name of the virtual environment.
 
-To generate a new `SECRET_KEY` for Django you can now run a Python command on
-the command line:
+To generate a new `SECRET_KEY` for Django you can now fire up the Python REPL.
 
 ``` bash
-> echo 'from django.core.management import utils; print(utils.get_random_secret_key())' | python
+> poetry run python
+```
+
+You should see something like this as the Python REPL starts:
+
+```
+Python 3.8.5 (default, Jan 27 2021, 15:41:15) 
+[GCC 9.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>>
+```
+First, import the function from the Django module:
+
+```
+>>> from django.core.management import utils
+```
+
+If that works without any issues, you can then output a new key:
+
+```
+>>> print(utils.get_random_secret_key())
+```
+
+When you've finished, you can exit the REPL with the function `exit()`.
+
+```
+>>> exit()
 ```
 
 You can copy and paste the string generated into your `.env` file as the value
