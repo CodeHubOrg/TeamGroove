@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ room.title }} | {% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb-item">
+            <li class="breadcrumb-item"><a href="{% url 'grooveboard' %}">Grooveboard</a></li>
+            <li class="breadcrumb-item active"><a href="{% url 'room' room.id %}" aria-current="page">{{ room.title }}</a></li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="media">
+                <img class="mr-3">
+                <div class="media-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col">
+    <h1>{{ room.title }}</h1>
+    <div class="col-md-12">
+        <div class="card mt-2">
+            <div class="card-body">
+                <h5 class="card-title">Groovers: </h5>
+                <p class="card-text"></p>
+                {% for member in room.members.all %}
+                    <p>{{ member.email }}</p>
+                {% endfor %}
+                <h5>Invited Groovers:</h5>
+                {% for member in invitations %}
+                    <p>{{ member.email }} - {{ member.date_sent|timesince }} ago</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% if room.created_by == request.user %}
+    <hr>
+    <h5>Room Owner Actions:</h5>
+    <hr>
+        <div class="col-4">
+            <a href="{% url 'edit_room' %}" class="btn btn-primary btn-block">Edit Room Name</a>
+            <hr>
+            {% if active_room.created_by == request.user %}
+                <a href="{% url 'invite' %}" class="btn btn-secondary btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> Invite Groovers to Join Your Room</a>
+                <a href="{% url 'authorize_with_spotify' %}" class="btn btn-success btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> View Your Spotify Playlists</a>
+            {% endif %}
+        </div>
+{% endif %}
+
+{% endblock %}

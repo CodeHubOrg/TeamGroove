@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In | {% endblock %}
+
+{% block content %}
+
+<div class="jumbotron mt-3">
+    <h1 class="display-4">Log In</h1>
+</div>
+
+<div class="row">
+    <div class="col">
+
+    </div>
+    <div class="col">
+        <form method='post', action=".">
+            {% csrf_token %}
+            <div class="form-group row">
+                <div class="form-group col-10">
+                    <label>Email: </label>
+                    <input type="email" class="form-control" name="username" id="id_username" placeholder="example@example.com">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="form-group col-10">
+                    <label>Password: </label>
+                    <input type="password" class="form-control" name="password" id="id_password" placeholder="Enter your password">
+                </div>
+            </div>
+                <button type="submit" class="btn btn-primary">Log In</button>
+                <small class="text-muted ml-2">
+                    <a href="{% url 'password_reset' %}">Forgotten Your Password?</a>
+                </small>
+                <div class="row">
+                    <small class="text-muted mt-2 ml-3">
+                        <a href="{% url 'signup' %}">Don't have an account? Sign Up</a>
+                    </small>
+                </div>
+            {% if form.errors %}
+                <div class="alert alert-warning" role="alert">
+                    {{ form.non_field_errors }}
+
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <div class="form-group row">
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ field.label }}: {{ field.errors }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+    <div class="col">
+
+    </div>
+</div>
+{% endblock %}

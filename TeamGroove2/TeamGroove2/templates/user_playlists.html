@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Playlists | {% endblock %}
+
+{% block content %}
+<h3>Choose one of your Spotify playlists to add to your Groove room:</h3>
+
+<div class="list-group">
+    {% for playlist in current_user_playlists.items %}          
+        <a href="#" class="list-group-item list-group-item-action">{{ playlist.name }}</a>    
+    {% endfor %}
+</div>
+
+{% endblock %}

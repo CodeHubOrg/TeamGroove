@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=teamgroove2
+POSTGRES_USER=ibAFjPlXoioGIHnuhrLEcUzeldiKfIxs
+POSTGRES_PASSWORD=yPDtWgIWBJPSzPZnapv42EO2hlm3XDAUpcXEZX3J9Wn3vRs5IxfJEYRm5IPQbiET

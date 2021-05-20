@@ -1,0 +1,8 @@
+# General
+# ------------------------------------------------------------------------------
+USE_DOCKER=yes
+IPYTHONDIR=/app/.ipython
+
+SPOTIPY_CLIENT_ID=""
+SPOTIPY_CLIENT_SECRET=""
+SPOTIPY_REDIRECT_URI="http://127.0.0.1:8000/grooveboard"

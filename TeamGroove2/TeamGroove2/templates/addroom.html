@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Room | {% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-3">
+        <form method="post" action=".">
+
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
