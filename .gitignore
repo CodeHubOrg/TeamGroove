@@ -139,3 +139,12 @@ poetry.lock
 
 # Stop your Spotify Token getting copied to git
 .spotify_caches/
+*.json
+*.yml
+*.js
+*.ts
+*.md
+*.txt
+node_modules/dotenv/LICENSE
+echo
+env.example
