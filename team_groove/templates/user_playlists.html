@@ -8,6 +8,9 @@
 <div class="list-group">
     {% for playlist in current_user_playlists.items %}          
         <a href="#" class="list-group-item list-group-item-action">{{ playlist.name }}</a>    
+
+        <!-- TO DO: TRACK_ID=track.id -->
+        <a href="{% url 'add_track_id_to_playlist' PLAYLIST_ID=playlist.id %}" class="list-group-item list-group-item-action">Add pseudo-random track to {{ playlist.id }} </a>  
     {% endfor %}
 </div>
 

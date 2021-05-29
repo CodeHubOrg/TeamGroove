@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Playlists | {% endblock %}
+
+{% block content %}
+<h3>Choose one of your Spotify playlists to add to your Groove room:</h3>
+
+<div class="list-group">
+    <!-- Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
+    Scenario 2b: Search for a new track to add to the playlist - Happy Path -->
+    {% for name in returned_track_name %}          
+        <a href="#" class="list-group-item list-group-item-action">{{  name }}</a>    
+    {% endfor %}
+</div>
+
+{% endblock %}
