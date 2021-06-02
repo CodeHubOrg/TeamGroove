@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Tracks | {% endblock %}
+
+{% block content %}
+<h3>Tracks in : ({{ playlist_name }}):</h3>
+
+<div class="list-group">
+    {% for i in track_name_artist %}
+        <a href="#" class="list-group-item list-group-item-action">{{ i }}</a>
+    {% endfor %}
+    <a href="{% url 'add_playlist_to_room' playlist_id playlist_name %}" class="btn btn-success"> Add this Playlist to Your Groove Room</a>
+</div>        
+
+{% endblock %}
