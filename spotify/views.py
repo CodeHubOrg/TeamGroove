@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from django.conf import settings
 
 import spotipy
 import os
@@ -9,12 +10,11 @@ import os
 from .models import Playlist
 from room.models import Room
 
-caches_folder = './.spotify_caches/'
-if not os.path.exists(caches_folder):
-    os.makedirs(caches_folder)
+
 
 def session_cache_path(request):
-    return caches_folder + request.user.email
+    print(settings.CACHES_FOLDER)
+    return f'{settings.CACHES_FOLDER}/{request.user.email}'
 
 @login_required
 def authorize_with_spotify(request, spotify_code=None):
