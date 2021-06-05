@@ -22,7 +22,7 @@ from users.views import signup
 from grooveboard.views import grooveboard
 from room.views import add_room, activate_room, room, invite, accept_invitation, edit_room, delete_room
 
-from spotify.views import authorize_with_spotify
+from spotify.views import authorize_with_spotify, handle_search_results
 
 
 from spotify.views import add_track_id_to_playlist # search_track_name_on_spotify
@@ -40,11 +40,10 @@ urlpatterns = [
     path('room/delete_room/<int:room_id>/', delete_room, name='delete_room'),
     path('room/accept_invitation/', accept_invitation, name='accept_invitation'),
 
-    path('spotify/add_track_id_to_playlist/<str:PLAYLIST_ID>', add_track_id_to_playlist, name='add_track_id_to_playlist'),
-#   path('spotify/search_track_name_on_spotify/', search_track_name_on_spotify, name='search_track_name_on_spotify'),
- 
     path('spotify/authorize_with_spotify/<spotify_code>', authorize_with_spotify, name='authorize_with_spotify'),
     path('spotify/authorize_with_spotify/', authorize_with_spotify, name='authorize_with_spotify'),
+    
+    path('spotify/handle_search_results/', handle_search_results, name='handle_search_results'),
        
     path('signup/', signup, name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
