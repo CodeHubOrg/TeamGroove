@@ -49,6 +49,11 @@
                 {% for member in invitations %}
                     <p>{{ member.email }} - {{ member.date_sent|timesince }} ago</p>
                 {% endfor %}
+                <hr>
+                <h5>Playlists for the Room:</h5>
+                {% for playlist in playlists %}
+                    <p>{{ playlist }}</p>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -62,7 +67,8 @@
             <hr>
             {% if active_room.created_by == request.user %}
                 <a href="{% url 'invite' %}" class="btn btn-secondary btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> Invite Groovers to Join Your Room</a>
-                <a href="{% url 'authorize_with_spotify' %}" class="btn btn-success btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> View Your Spotify Playlists</a>
+                <a href="{% url 'authorize_with_spotify' %}" class="btn btn-success btn-block"><i class="fa fa-eye" aria-hidden="true"></i> View Your Spotify Playlists</a>
+                <a href="#" class="btn btn-success btn-block"><i class="fa fa-eye" aria-hidden="true"></i> View Your YouTube Playlists</a>
             {% endif %}
         </div>
 {% endif %}

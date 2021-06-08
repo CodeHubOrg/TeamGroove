@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
-
 from pathlib import Path
+
+CACHES_FOLDER = Path('./.spotify_caches/')
+CACHES_FOLDER.mkdir(parents=True, exist_ok=True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
