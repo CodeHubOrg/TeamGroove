@@ -1,22 +1,24 @@
 from typing import NoReturn
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from django.conf import settings
 
 import spotipy
 import os
+
+from .models import Playlist
+from room.models import Room
 
 
 # Default parameter value to start while loop
 NEXT = 'https://api.spotify.com'
 
 
-caches_folder = './.spotify_caches/'
-if not os.path.exists(caches_folder):
-    os.makedirs(caches_folder)
-
 def session_cache_path(request):
-    return caches_folder + request.user.email
+    print(settings.CACHES_FOLDER)
+    return f'{settings.CACHES_FOLDER}/{request.user.email}'
 
 @login_required
 def authorize_with_spotify(request, spotify_code=None):
@@ -214,3 +216,42 @@ def append_track_data(request, returned_data, LIMIT):
     
     return context
     
+@login_required
+def user_playlist_tracks(request, playlist_id, playlist_name):
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    user_playlist_tracks = spotify.playlist_items(playlist_id,
+                                                    offset=0,
+                                                    fields='items.track.id, items.track.name')
+    
+    list_of_track_ids = []
+
+    for track in user_playlist_tracks['items']:
+        list_of_track_ids.append(track['track']['id'])
+
+    results = spotify.tracks(list_of_track_ids)
+    
+    track_name_artist = []
+    for track in results['tracks']:
+        track_name_artist.append(track['name'] + ' - ' + track['artists'][0]['name'])              
+
+    context = {
+        'playlist_id': playlist_id,
+        'playlist_name': playlist_name,
+        'track_name_artist': track_name_artist
+    }    
+    
+    return render(request, 'user_playlist_tracks.html', context)
+
+@login_required
+def add_playlist_to_room(request, playlist_id, playlist_name):
+    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
+
+    playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
+    # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
+
+    messages.info(request, "Your playlist was added to your room.")
+
+    return render(request, 'grooveboard.html')

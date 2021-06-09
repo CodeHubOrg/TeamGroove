@@ -26,7 +26,7 @@ from spotify.views import authorize_with_spotify, handle_search_results
 
 
 from spotify.views import add_track_id_to_playlist # search_track_name_on_spotify
-
+from spotify.views import authorize_with_spotify, user_playlist_tracks, add_playlist_to_room
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,6 +42,8 @@ urlpatterns = [
 
     path('spotify/authorize_with_spotify/<spotify_code>', authorize_with_spotify, name='authorize_with_spotify'),
     path('spotify/authorize_with_spotify/', authorize_with_spotify, name='authorize_with_spotify'),
+    path('spotify/user_playlist_tracks/<playlist_id>/<playlist_name>', user_playlist_tracks, name='user_playlist_tracks'),
+    path('spotify/add_playlist_to_room/<playlist_id>/<playlist_name>', add_playlist_to_room, name='add_playlist_to_room'),
     
     path('spotify/handle_search_results/', handle_search_results, name='handle_search_results'),
        
