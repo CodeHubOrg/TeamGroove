@@ -9,9 +9,22 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-import os
-
 from pathlib import Path
+
+import environ
+
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+# TeamGroove/
+APPS_DIR = ROOT_DIR / "team_groove"
+env = environ.Env()
+
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+if READ_DOT_ENV_FILE:
+    # OS environment variables take precedence over variables from .env
+    env.read_env(str(ROOT_DIR / ".env"))
+
+CACHES_FOLDER = Path("./.spotify_caches/")
+CACHES_FOLDER.mkdir(parents=True, exist_ok=True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,15 +33,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = "users.CustomUser"
 
 # Application definition
 
@@ -39,7 +49,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "core",
     "users",
     "grooveboard",
@@ -62,7 +71,7 @@ ROOT_URLCONF = "team_groove.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [ BASE_DIR / "templates" ],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -70,7 +79,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'room.context_processors.active_room',
+                "room.context_processors.active_room",
             ],
         },
     },
@@ -107,9 +116,10 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
     {
-        'NAME': 'users.validators.MaximumLengthValidator',
-            'OPTIONS': {
-                'max_length': 200, }
+        "NAME": "users.validators.MaximumLengthValidator",
+        "OPTIONS": {
+            "max_length": 200,
+        },
     },
 ]
 
@@ -133,14 +143,38 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'grooveboard'
-LOGOUT_REDIRECT_URL = 'frontpage'
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "grooveboard"
+LOGOUT_REDIRECT_URL = "frontpage"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_EMAIL_FROM = 'teamgroove@example.com'
-INVITE_ACCEPT_URL = '127.0.0.1:8000'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_EMAIL_FROM = "teamgroove@example.com"
+INVITE_ACCEPT_URL = "127.0.0.1:8000"
 
 # Added this as we started the project with 3.1 and as we are now using 3.2 it isn't added in by
 # default and it gets rid of the stupid warning when you use python manage.py runserver
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# LOGGING
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# See https://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s "
+            "%(process)d %(thread)d %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        }
+    },
+    "root": {"level": "INFO", "handlers": ["console"]},
+}

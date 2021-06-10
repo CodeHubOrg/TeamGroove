@@ -11,6 +11,7 @@ from django.template.loader import render_to_string
 
 from .forms import AddRoom, EmailInvite, AcceptInvitation, EditRoom
 from .models import Room, Invitation
+from spotify.models import Playlist
 
 
 @login_required
@@ -24,13 +25,14 @@ def add_room(request):
                 room.members.add(request.user)
                 room.save()                             
                 request.user.active_room_id = room.id
-                
+                # This would probably be a good place to get authorization
+                # from Spotify - code, token, refresh token. Or do it later on?
                 return redirect('grooveboard')
     else:
 
         form = AddRoom()
 
-    return render(request, 'addroom.html', {'form': form})
+    return render(request, 'add_room.html', {'form': form})
 
 @login_required
 def activate_room(request, room_id):
@@ -47,7 +49,9 @@ def room(request, room_id):
     room = get_object_or_404(Room, pk=room_id, status=Room.ACTIVE, members__in=[request.user])
     invitations = room.invitations.filter(status=Invitation.INVITED)
 
-    return render(request, 'room.html', {'room': room, 'invitations': invitations})
+    playlists = room.playlists.filter(room=room_id)
+    
+    return render(request, 'room.html', {'room': room, 'invitations': invitations, 'playlists': playlists})
 
 @login_required
 def invite(request):
@@ -64,12 +68,12 @@ def invite(request):
                 
                 if not invitations:
                     # erm, kind of random but just want to get it working
-                    invitation_code = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz123456789') for i in range(9))
-                    invitation = Invitation.objects.create(room=room, email=email, invitation_code=invitation_code)
+                    code = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz123456789') for i in range(9))
+                    invitation = Invitation.objects.create(room=room, email=email, code=code)
 
                     messages.info(request, 'Your new Groover at: ' + email +  ' was invited')
                     
-                    send_invitation(email, invitation_code, room)
+                    send_invitation(email, code, room)
 
                     return redirect('room', room_id=room.id)
                 else:
@@ -80,13 +84,13 @@ def invite(request):
     return render(request, 'invite.html', {'room': room, 'form': form})
 
 
-def send_invitation(to_email, invitation_code, room):
+def send_invitation(to_email, code, room):
     from_email = settings.DEFAULT_EMAIL_FROM
     accept_url = settings.INVITE_ACCEPT_URL
     
     subject = 'Invitation to use TeamGroove'
-    text_content = 'Invitation to use TeamGroove service. Your code is: %s' % invitation_code
-    html_content = render_to_string('email_invitation.html', {'invitation_code': invitation_code, 'room': room, 'accept_url': accept_url})
+    text_content = 'Invitation to use TeamGroove service. Your code is: %s' % code
+    html_content = render_to_string('email_invitation.html', {'code': code, 'room': room, 'accept_url': accept_url})
 
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
     msg.attach_alternative(html_content, 'text/html')
@@ -109,9 +113,9 @@ def accept_invitation(request):
         form = AcceptInvitation(request.POST)
 
         if form.is_valid():
-            invitation_code = request.POST.get('invitation_code')
+            code = request.POST.get('code')
 
-            invitations = Invitation.objects.filter(invitation_code=invitation_code, email=request.user.email)
+            invitations = Invitation.objects.filter(code=code, email=request.user.email)
 
             if invitations:
                 invitation = invitations[0]
