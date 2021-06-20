@@ -1,3 +1,6 @@
+from django.shortcuts import redirect
+from django.contrib import messages
+
 
 def append_track_data(request, returned_data, LIMIT):
     # TRACK_ARTIST, TRACK_NAME and TRACK_ALBUM are intended for view
@@ -19,6 +22,7 @@ def append_track_data(request, returned_data, LIMIT):
             break
         except:
             messages.error(request, 'ERROR: Unknown Error compiling track ids, artist names and track names.')
+            return redirect('room.html')
         else:
             context = {
                     'track_artist': track_artist,

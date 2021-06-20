@@ -11,10 +11,7 @@ from .models import Playlist, Track
 from room.models import Room
 from .utils import append_track_data
 
-
-# Default parameter value to start while loop
-NEXT = 'https://api.spotify.com'
-
+from .forms import SearchTrackName
 
 def session_cache_path(request):
     print(settings.CACHES_FOLDER)
@@ -23,7 +20,7 @@ def session_cache_path(request):
 @login_required
 def authorize_with_spotify(request, spotify_code=None):
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
-    auth_manager = spotipy.oauth2.SpotifyOAuth(scope='playlist-read-private',
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope='playlist-read-private playlist-modify-private playlist-modify-public playlist-read-collaborative',
                                                cache_handler=cache_handler,
                                                show_dialog=True)
 
@@ -48,17 +45,6 @@ def authorize_with_spotify(request, spotify_code=None):
     return render(request, 'user_playlists.html', context)
 
 @login_required
-def add_playlist_to_room(request, playlist_id, playlist_name):
-    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
-
-    playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
-    # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
-
-    messages.info(request, "Your playlist was added to your room.")
-
-    return render(request, 'grooveboard.html')
-
-@login_required
 def user_playlist_tracks(request, playlist_id, playlist_name):
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
@@ -77,102 +63,111 @@ def user_playlist_tracks(request, playlist_id, playlist_name):
     
     track_name_artist = []
 
-    # TO DO: clear Tracks model rebuild user playlist tracks everytime?
     for track in results['tracks']:
         track_name_artist.append(track['name'] + ' - ' + track['artists'][0]['name'])
-        
-        # TO DO: place in .utils file
-        # for all results (tracks), if not already in database, add to database; else, pass
-        if Track.objects.filter(track_id=track['id']).count() == 0: 
-            Track(playlist=playlist_name, track_id=track['id'], track_name=track['name'], track_artist = track['artists'][0]['name']).save()
-        else:
-            pass
 
     context = {
         'playlist_id': playlist_id,
         'playlist_name': playlist_name,
         'track_name_artist': track_name_artist
     }    
-    
+
     return render(request, 'user_playlist_tracks.html', context)
 
-# TO DO: Re-factor with class functions
-# @login_required
-# def get_playlist_items(request, playlist_id):
-#     spotify = spotipy.Spotify(auth_manager=auth_manager)
-#     MAX_ITEMS_LIMIT    = 100
-#     OFFSET             = 0
-#     OFFSET_UPPER_LIMIT = 10
-#     while ( ( NEXT != 'null' | NEXT != None ) & ( OFFSET <= OFFSET_UPPER_LIMIT ) ):
-#         try:
-#             returned_data = spotify.playlist_items(playlist_id, 
-#                                                    fields=None, 
-#                                                    limit=MAX_ITEMS_LIMIT, 
-#                                                    offset=OFFSET, 
-#                                                    market='GB', 
-#                                                    additional_types='track')
-#             LIMIT = returned_data['limit']
-#             NEXT  = returned_data['next']
-#             TOTAL = returned_data['total']
-#             if TOTAL > 0:
-#                 playlist_items = append_track_data(returned_data, LIMIT)
-#             else:
-#                 break
-#         except:        
-#             messages.error(request, 'ERROR ' + request['error']['status'] + ': ' + 'Playlist Items ' + request['error']['message'])
-#         else:
-#             messages.success(request, 'SUCCESS: Playlist Items Fetched')       
-#         OFFSET += 1
-#         if OFFSET > OFFSET_UPPER_LIMIT:
-#             messages.error(request, 'ERROR: There are over 1000 songs in your playlist? Let''s stop here!')
-#             break
-#         else:
-#             pass
+@login_required
+def add_playlist_to_room(request, playlist_id, playlist_name):
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+
+    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
+
+    if Playlist.objects.filter(room=room).filter(playlist_name=playlist_name).count() == 0:
+        playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
+        # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
+        messages.info(request, "Your playlist was added to your room.")
+    else:
+        playlist = Playlist.objects.get(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
+        messages.info(request, "Playlist is already added to your room.")
+
+    # TO DO: re-factor from def user_playlist_tracks
+    # TO DO: place in .utils file
+    user_playlist_tracks = spotify.playlist_items(playlist_id,
+                                                  offset=0,
+                                                  fields='items.track.id, items.track.name')
+    list_of_track_ids = []
+
+    for track in user_playlist_tracks['items']:
+        list_of_track_ids.append(track['track']['id'])
+
+    results = spotify.tracks(list_of_track_ids)
+
+    # for all results (tracks), if not already in database, add to database; else, pass
+    for track in results['tracks']:
+        if Track.objects.filter(playlist=playlist).filter(track_id=track['id']).count() == 0: 
+            Track.objects.create(playlist=playlist, track_id=track['id'], track_name=track['name'], track_artist = track['artists'][0]['name'])
+        else:
+            pass
+   
+    print(Playlist.objects.all())
+    print(Track.objects.all())
+
+    return render(request, 'grooveboard.html')
 
 # Scenario 1: Add a new track using a valid Spotify track name - Happy Path
 # Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
 # Scenario 2b: Search for a new track to add to the playlist - Happy Path
 @login_required
-def search_track_name_on_spotify(request, auth_manager, query, playlist_id, playlist_name):
+def search_track_name(request, playlist_id=None):
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
     MAX_SEARCH_LIMIT   = 100
+    NEXT               = 'https://api.spotify.com'
     OFFSET             = 0
     OFFSET_UPPER_LIMIT = 1
 
-    search_results     = None
+    if request.method == 'POST':
+        form = SearchTrackName(request.POST)
+    
+        if form.is_valid():
+            query = request.POST.get('query')
 
-    while ( ( NEXT != 'null' | NEXT != None ) & ( OFFSET <= OFFSET_UPPER_LIMIT ) ):
-        try:
-            returned_data = spotify.search(q=query, limit=MAX_SEARCH_LIMIT, offset=OFFSET, type='track', market='GB')
+            while ( ( NEXT != 'null' ) | ( NEXT != None ) ) & ( OFFSET <= OFFSET_UPPER_LIMIT ):
+                try:
+                    returned_data = spotify.search(query, limit=MAX_SEARCH_LIMIT, offset=OFFSET, type='track', market='GB')
 
-            LIMIT = returned_data['limit']
-            NEXT  = returned_data['next']
-            TOTAL = returned_data['total']
-            
-            if TOTAL > 0:
-                search_results = append_track_data(request, returned_data, LIMIT)
-            else:
-                messages.info(request, 'INFO: No tracks found.')
-                return redirect('room.html')
-        except:
-            messages.error(request, 'ERROR: Unknown error fetching track names.')
-            return redirect('room.html')
+                    LIMIT = returned_data['limit']
+                    NEXT  = returned_data['next']
+                    TOTAL = returned_data['total']
+                    
+                    if TOTAL > 0:
+                        search_results = append_track_data(request, returned_data, LIMIT)
+                        add_search_result_to_room(search_results, playlist_id)
+                    else:
+                        messages.info(request, 'INFO: No tracks found.')
+                        return redirect('room.html')
+                except:
+                    messages.error(request, 'ERROR at search_track_name: Unknown error fetching track names.')
+                    return redirect('room.html')
 
-        OFFSET += 1
+                OFFSET += 1
 
-        if OFFSET > OFFSET_UPPER_LIMIT:
-            messages.info(request, 'INFO: There are over 100 search results! Let''s stop here!')
-            return redirect('room.html')
-        else:
-            pass
+                if OFFSET > OFFSET_UPPER_LIMIT:
+                    messages.info(request, 'INFO: There are over 100 search results! Let''s stop here!')
+                    return redirect('room.html')
+    else:
+        form = SearchTrackName()
 
-    add_search_result_to_room(search_results, playlist_id, playlist_name)
+    return render(request, 'search_track_name.html', {'form': form})
 
 @login_required
-def add_search_result_to_room(request, search_results, playlist_id, playlist_name):
+def add_search_result_to_room(request, search_results, playlist_id):
+    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
+    playlist = get_object_or_404(Playlist, room=room)
+    playlist_name = playlist.playlist_name
+
     if len(search_results['track_id']) == 1:
         # Scenario 1: Add a new track using a valid Spotify track name - Happy Path
         TRACK_ID = search_results['track_id']
@@ -181,7 +176,7 @@ def add_search_result_to_room(request, search_results, playlist_id, playlist_nam
         # Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
         # Scenario 2b: Search for a new track to add to the playlist - Happy Path
         context = search_results
-        return render(request, 'room.html', context)  
+        return render(request, 'search_track_name.html', context)  
     else:
         messages.info(request, 'INFO: No tracks available.')
         return redirect('room.html')

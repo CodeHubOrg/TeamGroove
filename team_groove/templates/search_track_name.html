@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-4">
+        <form method="POST" action="." id="searchtrackname">
+            {% csrf_token %}
+            <input class="searchfield" id="searchbox" name="searchfield" type="text" placeholder="Track Name"/>
+            <button class="btn btn-outline-info" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="list-group">
+    <!-- Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
+    Scenario 2b: Search for a new track to add to the playlist - Happy Path -->
+</div>
+
+{% endblock %}

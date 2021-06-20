@@ -148,3 +148,5 @@ poetry.lock
 node_modules/dotenv/LICENSE
 echo
 env.example
+TeamGroove.code-workspace
+team_groove/#DUMP.py

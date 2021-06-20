@@ -14,19 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
 
 from core.views import FrontPageView
 from users.views import signup
 from grooveboard.views import grooveboard
 from room.views import add_room, activate_room, room, invite, accept_invitation, edit_room, delete_room
-
-from spotify.views import authorize_with_spotify
-
-
-from spotify.views import add_track_id_to_playlist # search_track_name_on_spotify
 from spotify.views import authorize_with_spotify, user_playlist_tracks, add_playlist_to_room
+from spotify.views import search_track_name
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,6 +31,7 @@ urlpatterns = [
     path('room/add_room/', add_room, name='add_room'),
     path('room/activate_room/<int:room_id>/', activate_room, name='activate_room'),
     path('room/<int:room_id>/', room, name='room'),
+
     path('room/invite/', invite, name='invite'),
     path('room/edit_room/', edit_room, name='edit_room'),
     path('room/delete_room/<int:room_id>/', delete_room, name='delete_room'),
@@ -42,9 +39,12 @@ urlpatterns = [
 
     path('spotify/authorize_with_spotify/<spotify_code>', authorize_with_spotify, name='authorize_with_spotify'),
     path('spotify/authorize_with_spotify/', authorize_with_spotify, name='authorize_with_spotify'),
-    path('spotify/user_playlist_tracks/<playlist_id>/<playlist_name>', user_playlist_tracks, name='user_playlist_tracks'),
-    path('spotify/add_playlist_to_room/<playlist_id>/<playlist_name>', add_playlist_to_room, name='add_playlist_to_room'),
-       
+    path('spotify/user_playlist_tracks/<playlist_id>)', user_playlist_tracks, name='user_playlist_tracks'),
+    path('spotify/add_playlist_to_room/<playlist_id>)', add_playlist_to_room, name='add_playlist_to_room'),
+ 
+    path('spotify/search_track_name/<str:playlist_id>', search_track_name, name='search_track_name'),
+    path('spotify/search_track_name/', search_track_name, name='search_track_name'),
+
     path('signup/', signup, name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
