@@ -1,0 +1,52 @@
+version: 2.1
+
+orbs:
+  # The python orb contains a set of prepackaged CircleCI configuration you can use repeatedly in your configuration files
+  # Orb commands and jobs help you with common scripting around a language/tool
+  # so you dont have to copy and paste it everywhere.
+  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
+  python: circleci/python@1.2
+
+workflows:
+  sample:  # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run. 
+    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
+    jobs:
+      - build-and-test
+      - trial-run
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/python:3.8
+    # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
+    # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
+    # Then run your tests!
+    # CircleCI will report the results back to your VCS provider.
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: poetry
+      - run:
+          name: Run tests
+          # This assumes pytest is installed via the install-package step above
+          command: |
+            poetry run python manage.py test
+  trial-run:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - python/install-packages:  
+          pkg-manager: poetry
+      - run:
+          command: |
+            export SECRET_KEY=123456
+            export DJANGO_SUPERUSER_USERNAME=tgadmin
+            export DJANGO_SUPERUSER_PASSWORD=123456
+            export DJANGO_SUPERUSER_EMAIL=tgadmin@mailinator.com
+            poetry run python3 manage.py migrate
+            poetry run python3 manage.py createsuperuser --noinput
+            timeout --preserve-status 10 poetry run python3 manage.py runserver 8081
+          
+     
