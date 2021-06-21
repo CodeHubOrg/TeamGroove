@@ -13,6 +13,10 @@ workflows:
     # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
     jobs:
       - build-and-test
+      - trial-run:
+          requires: 
+            - build-and-test
+
 
 
 jobs:
@@ -32,3 +36,19 @@ jobs:
           # This assumes pytest is installed via the install-package step above
           command: |
             poetry run python manage.py test 
+  trial-run:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - python/install-packages:  
+          pkg-manager: poetry
+      - command: |
+          export SECRET_KEY=123456
+          export DJANGO_SUPERUSER_USERNAME=tgadmin
+          export DJANGO_SUPERUSER_PASSWORD=123456
+          export DJANGO_SUPERUSER_EMAIL=tgadmin@mailinator.com
+          poetry run python3 manage.py migrate
+          poetry run python3 manage.py createsuperuser --noinput
+          
+     
