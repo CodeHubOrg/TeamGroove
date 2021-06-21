@@ -43,12 +43,13 @@ jobs:
       - checkout
       - python/install-packages:  
           pkg-manager: poetry
-      - command: |
-          export SECRET_KEY=123456
-          export DJANGO_SUPERUSER_USERNAME=tgadmin
-          export DJANGO_SUPERUSER_PASSWORD=123456
-          export DJANGO_SUPERUSER_EMAIL=tgadmin@mailinator.com
-          poetry run python3 manage.py migrate
-          poetry run python3 manage.py createsuperuser --noinput
+      - run:
+          command: |
+            export SECRET_KEY=123456
+            export DJANGO_SUPERUSER_USERNAME=tgadmin
+            export DJANGO_SUPERUSER_PASSWORD=123456
+            export DJANGO_SUPERUSER_EMAIL=tgadmin@mailinator.com
+            poetry run python3 manage.py migrate
+            poetry run python3 manage.py createsuperuser --noinput
           
      
