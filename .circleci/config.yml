@@ -13,11 +13,7 @@ workflows:
     # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
     jobs:
       - build-and-test
-      - trial-run:
-          requires: 
-            - build-and-test
-
-
+      - trial-run
 
 jobs:
   build-and-test:
@@ -51,5 +47,6 @@ jobs:
             export DJANGO_SUPERUSER_EMAIL=tgadmin@mailinator.com
             poetry run python3 manage.py migrate
             poetry run python3 manage.py createsuperuser --noinput
+            timeout 10 poetry run python3 manage.py runserver 8081
           
      
