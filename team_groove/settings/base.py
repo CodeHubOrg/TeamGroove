@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 from pathlib import Path
 
-ROOT_DIR = 
-Path(__file__).resolve(strict=True).parent.parent.parent
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # TeamGroove/
 APPS_DIR = ROOT_DIR / "team_groove"
 
