@@ -31,7 +31,7 @@ jobs:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           command: |
-            poetry run python manage.py test || true
+            poetry run python manage.py test
   trial-run:
     docker:
       - image: cimg/python:3.8
@@ -47,6 +47,6 @@ jobs:
             export DJANGO_SUPERUSER_EMAIL=tgadmin@mailinator.com
             poetry run python3 manage.py migrate
             poetry run python3 manage.py createsuperuser --noinput
-            timeout 10 poetry run python3 manage.py runserver 8081
+            timeout --preserve-status 10 poetry run python3 manage.py runserver 8081
           
      
