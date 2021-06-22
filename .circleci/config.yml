@@ -17,7 +17,7 @@ workflows:
       - trial-run
 
 jobs:
-  build-from-scratch:
+  build-from-scratch:  # This job illustrates what is required to get TeamGroove running from a relatively minimal system.
     docker:
       - image: cimg/base:2021.04
     steps:
@@ -25,12 +25,20 @@ jobs:
       - run:
           name: Install stuff
           command: |
-            sudo apt update && sudo apt install python3 python3-distutils curl -y
+            # Use apt update to ensure that apt finds the packages we want to install
+            sudo apt update
+            sudo apt install python3 python3-distutils curl -y
+            # This is the recommended way to install poetry, from https://python-poetry.org/docs/.
             curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
-            #export PATH=$HOME/.poetry/bin:$PATH
+            # Use this script installed by the above line to modify the $PATH so poetry works properly.
             source $HOME/.poetry/env
+            # Now set up the packages required by the pyproject.toml file.
             poetry install
+            # Do we have a working installation? Try running the unit tests.
+            mkdir -p test-results
             poetry run python manage.py test
+      - store_test_results:
+          path: test-results
   build-and-test:
     docker:
       - image: cimg/python:3.8
