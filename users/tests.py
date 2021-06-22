@@ -165,7 +165,7 @@ class UsersManagersTests(TestCase):
     def test_password_too_long(self):
         data = {
             "email": "test_maximum_length_password@example.com",
-            "password1": "betterpassword" * 199,
+            "password1": "betterpassword" * 100,
             "password2": "betterpassword" * 100,
         }
 
