@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # From https://pypi.org/project/unittest-xml-reporting/, a recipe for
 # getting Django to output XML results.
 TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
+TEST_OUTPUT_DIR = 'test-results'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/

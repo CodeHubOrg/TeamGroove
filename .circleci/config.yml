@@ -31,7 +31,10 @@ jobs:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           command: |
+            mkdir -p test-results
             poetry run python manage.py test
+      - store_test_results:
+          path: test-results
   trial-run:
     docker:
       - image: cimg/python:3.8
