@@ -25,7 +25,7 @@ jobs:
       - run:
           name: Install stuff
           command: |
-            sudo apt install -y python3 python3-distutils curl
+            sudo apt update && sudo apt install python3 python3-distutils curl -y
             curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
             #export PATH=$HOME/.poetry/bin:$PATH
             source $HOME/.poetry/env
