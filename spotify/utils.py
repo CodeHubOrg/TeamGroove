@@ -1,32 +1,22 @@
-from django.shortcuts import redirect
-from django.contrib import messages
-
-
-def append_track_data(request, returned_data, LIMIT):
+def append_track_data(returned_data, track_name_artist_album, track_id, LIMIT):
     # TRACK_ARTIST, TRACK_NAME and TRACK_ALBUM are intended for view
     # TRACK_ID is used for adding to a playlist        
-    track_artist = []
-    track_name   = []
-    track_id     = []
-    track_album  = []
-
     index = 0        
     while index < LIMIT:
         try:
-            track_artist.append(returned_data['items'][index]['track']['artists']['name'])
-            track_name.append(returned_data['items'][index]['track']['name']) 
-            track_id.append(returned_data['items'][index]['track']['id'])
-            track_album.append(returned_data['items'][index]['track']['album']['name'])
-            index += 1  
+            track_name_artist_album.append(returned_data['tracks']['items'][index]['name']
+                                            + ' ' 
+                                            + returned_data['tracks']['items'][index]['artists'][0]['name']
+                                            + ' ' 
+                                            + returned_data['tracks']['items'][index]['album']['name']
+                                            )
+            track_id.append(returned_data['tracks']['items'][index]['id'])
         except IndexError:
             break
-        except:
-            messages.error(request, 'ERROR: Unknown Error compiling track ids, artist names and track names.')
-            return redirect('room.html')
         else:
-            context = {
-                    'track_artist': track_artist,
-                    'track_name':   track_name,
-                    'track_id':     track_id,
-                    'track_album':  track_album
-            }
+            pass
+        index += 1  
+
+    cleaned_search_result = { 'track_name_artist_album': track_name_artist_album, 'track_id': track_id }
+
+    return cleaned_search_result

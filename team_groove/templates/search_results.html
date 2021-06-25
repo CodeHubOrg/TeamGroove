@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="list-group">
+    <!-- Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
+    Scenario 2b: Search for a new track to add to the playlist - Happy Path -->
+    {% for item in track_name_artist_album %}
+        <a href="#" class="list-group-item list-group-item-action">{{ item }}</a>
+    {% endfor %}
+</div>
+
+{% endblock %}
