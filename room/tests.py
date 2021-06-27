@@ -83,3 +83,33 @@ class ActivateRoomViewTests(TestCase):
         response = self.client.get("/room/activate_room/1/")
         # Django should redirect to room 1 as it is now active
         self.assertEqual(response.status_code, 302)
+    
+class EditRoomView(TestCase):
+    def test_login_required(self):
+        response = self.client.get("/room/activate_room/1/")
+
+        # Django should redirect to login page as client not logged in
+        self.assertEqual(response.status_code, 302)
+
+    def test_edit_room_title(self):
+        # create user and login
+        User = get_user_model()
+        self.client = Client()
+
+        user = User.objects.create_user(
+            email="test_edit_a_room@example.com",
+            password="betterpassword",
+        )
+
+        self.client.login(
+            email="test_edit_a_room@example.com", password="betterpassword"
+        )
+        # create a room so we can activate it
+        response = self.client.post("/room/add_room/", data={"title": "Rave in a cave"})
+        # activate room
+        response = self.client.get("/room/activate_room/1/")
+        
+        response = self.client.post("/room/edit_room/", data={"title": "bRave in a cave"})
+        
+        # Django should redirect to room 1 as it is now active and we've changed the title
+        self.assertEqual(response.status_code, 302)
