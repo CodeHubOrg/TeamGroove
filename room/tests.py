@@ -6,14 +6,17 @@ from django.test.client import Client
 from room.models import Room, Invitation
 from room.forms import AddRoom, EditRoom
 
+
 class AddRoomFormTests(TestCase):
     # test form validation
     def test_add_room_max_characters(self):
         form = AddRoom(data={"title": "Maximum characters working?" * 10})
 
         self.assertEqual(
-            form.errors["title"], ["Ensure this value has at most 255 characters (it has 270)."]
+            form.errors["title"],
+            ["Ensure this value has at most 255 characters (it has 270)."],
         )
+
 
 class EditRoomFormTests(TestCase):
     # test form validation
@@ -21,7 +24,8 @@ class EditRoomFormTests(TestCase):
         form = EditRoom(data={"title": "Maximum characters working?" * 10})
 
         self.assertEqual(
-            form.errors["title"], ["Ensure this value has at most 255 characters (it has 270)."]
+            form.errors["title"],
+            ["Ensure this value has at most 255 characters (it has 270)."],
         )
 
 
@@ -42,7 +46,9 @@ class AddRoomViewTests(TestCase):
             password="betterpassword",
         )
 
-        self.client.login(email="test_add_a_room@example.com", password="betterpassword")
+        self.client.login(
+            email="test_add_a_room@example.com", password="betterpassword"
+        )
 
         response = self.client.post(
             "/room/add_room/", data={"title": "Very Silent Disco"}
@@ -50,11 +56,11 @@ class AddRoomViewTests(TestCase):
         # Django redirects to grooveboard if successful
         self.assertEqual(response.status_code, 302)
 
-class ActivateRoomViewTests(TestCase):
 
+class ActivateRoomViewTests(TestCase):
     def test_login_required(self):
         response = self.client.get("/room/activate_room/1/")
-        
+
         # Django should redirect to login page as client not logged in
         self.assertEqual(response.status_code, 302)
 
@@ -68,11 +74,11 @@ class ActivateRoomViewTests(TestCase):
             password="betterpassword",
         )
 
-        self.client.login(email="test_activate_a_room@example.com", password="betterpassword")
-        # create a room so we can activate it
-        response = self.client.post(
-            "/room/add_room/", data={"title": "Rave in a cave"}
+        self.client.login(
+            email="test_activate_a_room@example.com", password="betterpassword"
         )
+        # create a room so we can activate it
+        response = self.client.post("/room/add_room/", data={"title": "Rave in a cave"})
         # activate room
         response = self.client.get("/room/activate_room/1/")
         # Django should redirect to room 1 as it is now active
