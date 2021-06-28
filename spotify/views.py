@@ -13,7 +13,6 @@ from room.models import Room
 
 
 def session_cache_path(request):
-    print(settings.CACHES_FOLDER)
     return f'{settings.CACHES_FOLDER}/{request.user.email}'
 
 @login_required
@@ -57,20 +56,28 @@ def user_playlist_tracks(request, playlist_id, playlist_name):
 
     for track in user_playlist_tracks['items']:
         list_of_track_ids.append(track['track']['id'])
-
-    results = spotify.tracks(list_of_track_ids)
     
-    track_name_artist = []
-    for track in results['tracks']:
-        track_name_artist.append(track['name'] + ' - ' + track['artists'][0]['name'])              
+    # check for playlist with no tracks
+    if not list_of_track_ids:
 
-    context = {
-        'playlist_id': playlist_id,
-        'playlist_name': playlist_name,
-        'track_name_artist': track_name_artist
-    }    
-    
-    return render(request, 'user_playlist_tracks.html', context)
+        return redirect('room', room_id=request.user.active_room_id)
+
+    else:
+        
+        results = spotify.tracks(list_of_track_ids)
+        
+        track_name_artist = []
+
+        for track in results['tracks']:
+            track_name_artist.append(track['name'] + ' - ' + track['artists'][0]['name'])              
+
+        context = {
+            'playlist_id': playlist_id,
+            'playlist_name': playlist_name,
+            'track_name_artist': track_name_artist
+        }    
+        
+        return render(request, 'user_playlist_tracks.html', context)
 
 @login_required
 def add_playlist_to_room(request, playlist_id, playlist_name):

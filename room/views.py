@@ -67,17 +67,17 @@ def invite(request):
                 invitations = Invitation.objects.filter(room=room, email=email)
                 
                 if not invitations:
-                    # erm, kind of random but just want to get it working
                     code = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz123456789') for i in range(9))
-                    invitation = Invitation.objects.create(room=room, email=email, code=code)
+                    invitation = Invitation.objects.create(room=room, email=email, invitation_code=code)
 
-                    messages.info(request, 'Your new Groover at: ' + email +  ' was invited')
+                    messages.info(request, f'Your new Groover at: {email} was invited.')
                     
                     send_invitation(email, code, room)
 
                     return redirect('room', room_id=room.id)
                 else:
-                    messages.info(request, 'The Groover at:' +  email + ' has already been invited')
+                    messages.info(request, f'The Groover at: {email} has already been invited.')
+                    
     else:
         form = EmailInvite()
 
@@ -89,7 +89,7 @@ def send_invitation(to_email, code, room):
     accept_url = settings.INVITE_ACCEPT_URL
     
     subject = 'Invitation to use TeamGroove'
-    text_content = 'Invitation to use TeamGroove service. Your code is: %s' % code
+    text_content = f'Invitation to use TeamGroove service. Your code is: {code}' 
     html_content = render_to_string('email_invitation.html', {'code': code, 'room': room, 'accept_url': accept_url})
 
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
@@ -128,8 +128,7 @@ def accept_invitation(request):
                 request.user.active_team_id = room.id
                 request.user.save()
 
-                messages.info(request, 'Invitation to join ' + room.title + ' accepted.')
-
+                messages.info(request, f'Invitation to join {room.title} accepted.')
                 send_invitation_accepted(room, invitation)
                 
                 return redirect('grooveboard')
