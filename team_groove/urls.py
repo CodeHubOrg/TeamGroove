@@ -38,8 +38,8 @@ urlpatterns = [
 
     path('spotify/authorize_with_spotify/<spotify_code>', authorize_with_spotify, name='authorize_with_spotify'),
     path('spotify/authorize_with_spotify/', authorize_with_spotify, name='authorize_with_spotify'),
-    path('spotify/user_playlist_tracks/<playlist_id>/<playlist_name>', user_playlist_tracks, name='user_playlist_tracks'),
-    path('spotify/add_playlist_to_room/<playlist_id>/<playlist_name>', add_playlist_to_room, name='add_playlist_to_room'),
+    path('spotify/user_playlist_tracks/<playlist_id>/', user_playlist_tracks, name='user_playlist_tracks'),
+    path('spotify/add_playlist_to_room/<playlist_id>/', add_playlist_to_room, name='add_playlist_to_room'),
     
     
 
