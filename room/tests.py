@@ -182,8 +182,6 @@ class InviteToRoomView(TestCase):
         response = self.client.get("/room/activate_room/1/")
         # create an invite
         response = self.client.post("/room/invite/", data={"email": "DiscoStu@example.com"})
-        print(response)
-        # Django should redirect to login page as client not logged in
+        
+        # Django should redirect back to active room
         self.assertEqual(response.status_code, 302)
-
-
