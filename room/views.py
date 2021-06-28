@@ -69,7 +69,7 @@ def invite(request):
                 if not invitations:
                     # erm, kind of random but just want to get it working
                     code = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz123456789') for i in range(9))
-                    invitation = Invitation.objects.create(room=room, email=email, code=code)
+                    invitation = Invitation.objects.create(room=room, email=email, invitation_code=code)
 
                     messages.info(request, 'Your new Groover at: ' + email +  ' was invited')
                     
