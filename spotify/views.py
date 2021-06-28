@@ -5,12 +5,9 @@ from django.contrib import messages
 from django.conf import settings
 
 import spotipy
-import os
-import json
 
 from .models import Playlist
 from room.models import Room
-
 
 
 def session_cache_path(request):
