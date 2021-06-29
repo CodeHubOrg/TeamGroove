@@ -5,11 +5,9 @@ from django.contrib import messages
 from django.conf import settings
 
 import spotipy
-import os
 
 from .models import Playlist
 from room.models import Room
-
 
 
 def session_cache_path(request):
@@ -43,7 +41,7 @@ def authorize_with_spotify(request, spotify_code=None):
     return render(request, 'user_playlists.html', context)
 
 @login_required
-def user_playlist_tracks(request, playlist_id, playlist_name):
+def user_playlist_tracks(request, playlist_id):
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
 
@@ -51,6 +49,9 @@ def user_playlist_tracks(request, playlist_id, playlist_name):
     user_playlist_tracks = spotify.playlist_items(playlist_id,
                                                     offset=0,
                                                     fields='items.track.id, items.track.name')
+    
+    results = spotify.playlist(playlist_id)
+    playlist_name = results['name']
     
     list_of_track_ids = []
 
@@ -80,8 +81,19 @@ def user_playlist_tracks(request, playlist_id, playlist_name):
         return render(request, 'user_playlist_tracks.html', context)
 
 @login_required
-def add_playlist_to_room(request, playlist_id, playlist_name):
+def add_playlist_to_room(request, playlist_id):
     room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
+
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    user_playlist_tracks = spotify.playlist_items(playlist_id,
+                                                    offset=0,
+                                                    fields='items.track.id, items.track.name')
+    
+    results = spotify.playlist(playlist_id)
+    playlist_name = results['name']
 
     playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
     # Need to add the tracks from the playlist to our db here so we can let people vote on them later?

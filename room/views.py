@@ -90,7 +90,7 @@ def send_invitation(to_email, code, room):
     
     subject = 'Invitation to use TeamGroove'
     text_content = f'Invitation to use TeamGroove service. Your code is: {code}' 
-    html_content = render_to_string('email_invitation.html', {'code': code, 'room': room, 'accept_url': accept_url})
+    html_content = render_to_string('email_invitation.html', {'invitation_code': code, 'room': room, 'accept_url': accept_url})
 
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
     msg.attach_alternative(html_content, 'text/html')
