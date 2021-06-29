@@ -58,19 +58,19 @@ def user_playlist_tracks(request, playlist_id):
     for track in user_playlist_tracks['items']:
         list_of_track_ids.append(track['track']['id'])
     
-    # check for playlist with no tracks
     if not list_of_track_ids:
-
+        messages.info(request, "There are no tracks in your playlist.")
         return redirect('room', room_id=request.user.active_room_id)
 
     else:
-        
-        results = spotify.tracks(list_of_track_ids)
-        
+        # Fix for bug where more than 50 tracks in a playlist causes an error.       
+        max_tracks_per_call = 50
         track_name_artist = []
 
-        for track in results['tracks']:
-            track_name_artist.append(track['name'] + ' - ' + track['artists'][0]['name'])              
+        for start in range(0, len(list_of_track_ids), max_tracks_per_call):
+            results = spotify.tracks(list_of_track_ids[start: start + max_tracks_per_call])
+            for track in results['tracks']:
+                track_name_artist.append(track['name'] + ' - ' + track['artists'][0]['name'])
 
         context = {
             'playlist_id': playlist_id,
