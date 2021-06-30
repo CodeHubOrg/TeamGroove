@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 from core.views import FrontPageView
 from users.views import signup
 from grooveboard.views import grooveboard
-from room.views import add_room, activate_room, room, invite, accept_invitation, edit_room, delete_room
+from room.views import add_room, activate_room, room, invite, accept_invitation, edit_room, delete_room, delete_invitation
 
 from spotify.views import authorize_with_spotify, user_playlist_tracks, add_playlist_to_room
 
@@ -35,6 +35,7 @@ urlpatterns = [
     path('room/edit_room/', edit_room, name='edit_room'),
     path('room/delete_room/<int:room_id>/', delete_room, name='delete_room'),
     path('room/accept_invitation/', accept_invitation, name='accept_invitation'),
+    path('room/delete_invitation/<email>', delete_invitation, name='delete_invitation'),
 
     path('spotify/authorize_with_spotify/<spotify_code>', authorize_with_spotify, name='authorize_with_spotify'),
     path('spotify/authorize_with_spotify/', authorize_with_spotify, name='authorize_with_spotify'),
