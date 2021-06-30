@@ -47,7 +47,7 @@
                 {% endfor %}
                 <h5>Invited Groovers:</h5>
                 {% for member in invitations %}
-                    <p>{{ member.email }} - {{ member.date_sent|timesince }} ago <a href="{% url 'delete_invitation' member.email %}" class="btn btn-success btn-small"><i class="fa fa-delete" aria-hidden="true"></i> Delete Invitation?</a></p>
+                    <p>{{ member.email }} - {{ member.date_sent|timesince }} ago <a href="{% url 'delete_invitation' member.email %}" class="btn btn-success btn-small"><i class="fa fa-trash" aria-hidden="true"></i> Delete Invitation?</a></p>
                     <hr>
                 {% endfor %}
                 <hr>
