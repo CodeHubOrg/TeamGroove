@@ -4,12 +4,13 @@ def append_track_data(returned_data, track_name_artist_album, track_id, LIMIT):
     index = 0        
     while index < LIMIT:
         try:
-            track_name_artist_album.append(returned_data['tracks']['items'][index]['name']
-                                            + ' ' 
-                                            + returned_data['tracks']['items'][index]['artists'][0]['name']
-                                            + ' ' 
-                                            + returned_data['tracks']['items'][index]['album']['name']
-                                            )
+            track_name_artist_album.append(
+                returned_data['tracks']['items'][index]['name']
+                + '    ' 
+                + returned_data['tracks']['items'][index]['artists'][0]['name']
+                + '    ' 
+                + returned_data['tracks']['items'][index]['album']['name']
+            )
             track_id.append(returned_data['tracks']['items'][index]['id'])
         except IndexError:
             break
