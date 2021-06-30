@@ -143,3 +143,12 @@ def delete_room(request, room_id):
     messages.info(request, "Your room was deleted.")
 
     return redirect('grooveboard')
+
+@login_required
+def delete_invitation(request, email):
+    invitation = get_object_or_404(Invitation, room=request.user.active_room_id, email=email)
+    invitation.delete()
+    
+    messages.info(request, f"Your invitation to: {email} was deleted.")
+
+    return redirect('room', room_id=request.user.active_room_id)

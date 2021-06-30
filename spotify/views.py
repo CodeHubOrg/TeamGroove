@@ -100,4 +100,4 @@ def add_playlist_to_room(request, playlist_id):
 
     messages.info(request, "Your playlist was added to your room.")
 
-    return render(request, 'grooveboard.html')
+    return redirect('room', room_id=request.user.active_room_id)

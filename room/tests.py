@@ -185,3 +185,39 @@ class InviteToRoomView(TestCase):
         
         # Django should redirect back to active room
         self.assertEqual(response.status_code, 302)
+
+class DeleteInviteToRoom(TestCase):
+
+    def test_login_required(self):
+        response = self.client.get("/room/delete_invitation/bob@example.com")
+        
+        # Django should redirect to login page as client not logged in
+        self.assertEqual(response.status_code, 302)
+
+    def test_delete_invite_to_user(self):
+        # create user and login
+        User = get_user_model()
+        self.client = Client()
+
+        user = User.objects.create_user(
+            email="test_delete_invite@example.com",
+            password="betterpassword",
+        )
+
+        self.client.login(
+            email="test_delete_invite@example.com", password="betterpassword"
+        )
+
+        # create a room so we can invite people to it
+        response = self.client.post("/room/add_room/", data={"title": "You aren't invited room"})
+        # activate room
+        response = self.client.get("/room/activate_room/1/")
+        # create an invite
+        response = self.client.post("/room/invite/", data={"email": "DiscoStu@example.com"})
+        # Delete DiscoStu invitation because we don't dig disco
+        response = self.client.get("/room/delete_invitation/DiscoStu@example.com")
+        
+        # Django should redirect back to active room
+        self.assertEqual(response.status_code, 302)
+
+
