@@ -49,7 +49,11 @@ urlpatterns = [
     path("room/edit_room/", edit_room, name="edit_room"),
     path("room/delete_room/<int:room_id>/", delete_room, name="delete_room"),
     path("room/accept_invitation/", accept_invitation, name="accept_invitation"),
-    path("room/delete_invitation/<str:email>/", delete_invitation, name="delete_invitation"),
+    path(
+        "room/delete_invitation/<str:email>/",
+        delete_invitation,
+        name="delete_invitation",
+    ),
     path(
         "room/remove_user_from_room/<str:email>/",
         remove_user_from_room,
