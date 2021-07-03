@@ -188,11 +188,13 @@ def delete_invitation(request, email):
 
 @login_required
 def remove_user_from_room(request, email):
-    remove_user_id = get_object_or_404(CustomUser, email=email)    
-    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user)
+    remove_user_id = get_object_or_404(CustomUser, email=email)
+    room = get_object_or_404(
+        Room, pk=request.user.active_room_id, created_by=request.user
+    )
     invitation = get_object_or_404(
         Invitation, room=request.user.active_room_id, email=email
-    )   
+    )
 
     room.members.remove(remove_user_id)
     room.save()
@@ -204,11 +206,11 @@ def remove_user_from_room(request, email):
         other_rooms = Room.objects.get(members=remove_user_id)
         if other_rooms:
             remove_user_id.active_room_id = other_rooms.pk
-            remove_user_id.save()  
+            remove_user_id.save()
     except:
         remove_user_id.active_room_id = 0
         remove_user_id.save()
-   
+
     messages.info(request, f"Groover: {email} was deleted from your room.")
-   
+
     return redirect("room", room_id=request.user.active_room_id)
