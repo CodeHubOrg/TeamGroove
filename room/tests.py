@@ -27,7 +27,6 @@ class EmailInviteFormTests(TestCase):
             ["Enter a valid email address."],
         )
 
-
 class EditRoomFormTests(TestCase):
     # test form validation
     def test_add_room_max_characters(self):
@@ -189,7 +188,7 @@ class InviteToRoomView(TestCase):
 class DeleteInviteToRoom(TestCase):
 
     def test_login_required(self):
-        response = self.client.get("/room/delete_invitation/bob@example.com")
+        response = self.client.get("/room/delete_invitation/bob@example.com/")
         
         # Django should redirect to login page as client not logged in
         self.assertEqual(response.status_code, 302)
@@ -215,9 +214,67 @@ class DeleteInviteToRoom(TestCase):
         # create an invite
         response = self.client.post("/room/invite/", data={"email": "DiscoStu@example.com"})
         # Delete DiscoStu invitation because we don't dig disco
-        response = self.client.get("/room/delete_invitation/DiscoStu@example.com")
+        response = self.client.get("/room/delete_invitation/DiscoStu@example.com/")
         
         # Django should redirect back to active room
         self.assertEqual(response.status_code, 302)
 
+class DeleteUserFromRoom(TestCase):
 
+    def test_login_required(self):
+        response = self.client.get("/room/remove_user_from_room/bob@example.com/")
+        
+        # Django should redirect to login page as client not logged in
+        self.assertEqual(response.status_code, 302)
+
+    def test_delete_user_from_room(self):
+        # create user and login
+        User = get_user_model()
+        self.client = Client()
+
+        user = User.objects.create_user(
+            email="test_delete_user@example.com",
+            password="betterpassword",
+        )
+
+        self.client.login(
+            email="test_delete_user@example.com", password="betterpassword"
+        )
+
+        # Create a room so we can invite people to it
+        response = self.client.post("/room/add_room/", data={"title": "You are goint to be deleted"})
+        # Activate room
+        response = self.client.get("/room/activate_room/1/")
+        # Create an invite
+        response = self.client.post("/room/invite/", data={"email": "DiscoStu@example.com"})
+        
+        self.client.logout()
+        # Need to logon as DiscoStu so we can accept the invitation.
+        User = get_user_model()
+        self.client = Client()
+
+        user = User.objects.create_user(
+            email="DiscoStu@example.com",
+            password="betterpassword",
+        )
+
+        self.client.login(
+            email="DiscoStu@example.com", password="betterpassword"
+        )
+
+        # How to retrieve Disco Stu's invitation code? Direct from DB? Works but not how Stu gets his code.
+        test_invite = Invitation.objects.get(email="DiscoStu@example.com")
+        
+        response = self.client.post("/room/accept_invitation/", data={"invitation_code": test_invite})
+        # Logout Disco Stu
+        self.client.logout()
+
+        # Login with our test user again
+        self.client.login(
+            email="test_delete_user@example.com", password="betterpassword"
+        )
+        # Delete DiscoStu from room because we don't dig disco. 
+        response = self.client.get("/room/remove_user_from_room/DiscoStu@example.com/")
+        
+        # Django should redirect back to active room
+        self.assertEqual(response.status_code, 302)
