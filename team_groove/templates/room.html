@@ -42,12 +42,27 @@
             <div class="card-body">
                 <h5 class="card-title">Groovers: </h5>
                 <p class="card-text"></p>
-                {% for member in room.members.all %}
-                    <p>{{ member.email }}</p>
-                {% endfor %}
+                {% if active_room.created_by == request.user %}                
+                    {% for member in room.members.all %}
+                        <hr>
+                        {% if active_room.created_by == member %}
+                            <p>{{ member.email }}                        
+                        {% else %} 
+                            <p>{{ member.email }} - <a href="{% url 'remove_user_from_room' member.email %}" class="btn btn-success btn-small"><i class="fa fa-trash" aria-hidden="true"></i> Remove Groover?</a></p>   
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% for member in room.members.all %}
+                        <hr>                    
+                        <p>{{ member.email }}
+                    {% endfor %}
+                {% endif %}               
+
+
                 <h5>Invited Groovers:</h5>
                 {% for member in invitations %}
-                    <p>{{ member.email }} - {{ member.date_sent|timesince }} ago</p>
+                    <p>{{ member.email }} - {{ member.date_sent|timesince }} ago <a href="{% url 'delete_invitation' member.email %}" class="btn btn-success btn-small"><i class="fa fa-trash" aria-hidden="true"></i> Delete Invitation?</a></p>
+                    <hr>
                 {% endfor %}
                 <hr>
                 <h5>Playlists for the Room:</h5>

@@ -8,7 +8,7 @@
 <div class="list-group">
     {% for playlist in current_user_playlists.items %}          
         <a href="#" class="list-group-item list-group-item-action">{{ playlist.name }}</a>
-        <a href="{% url 'user_playlist_tracks' playlist.id %}" class="btn btn-success"> View Your Tracks</a>
+        <a href="{% url 'user_playlist_tracks' playlist.id  %}" class="btn btn-success"> View Your Tracks</a>
     {% endfor %}
 </div>
 

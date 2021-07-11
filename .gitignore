@@ -135,19 +135,10 @@ workspace.xml
 .idea/
 
 # Poetry
-poetry.lock
+#poetry.lock
 
 # Stop your Spotify Token getting copied to git
 .spotify_caches/
-*.json
-*.yml
-*.js
-*.ts
-*.md
-*.txt
-node_modules/dotenv/LICENSE
-echo
-env.example
-TeamGroove.code-workspace
-team_groove/#DUMP.py
-Untitled-1
+
+# Stop local test runner results being added to repo
+*.xml
