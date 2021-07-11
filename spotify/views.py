@@ -115,7 +115,6 @@ def add_playlist_to_room(request, playlist_id):
 
         context = {
             'playlist_id': playlist_id,
-            'playlist_name': playlist_name,
             'track_name_artist': track_name_artist
         }    
         
@@ -130,8 +129,8 @@ def add_playlist_to_room(request, playlist_id):
 
     spotify = spotipy.Spotify(auth_manager=auth_manager)
     user_playlist_tracks = spotify.playlist_items(playlist_id,
-                                                    offset=0,
-                                                    fields='items.track.id, items.track.name')
+                                                offset=0,
+                                                fields='items.track.id, items.track.name')
     
     results = spotify.playlist(playlist_id)
     playlist_name = results['name']
@@ -222,23 +221,6 @@ def search_results(request, cleaned_search_results, playlist_id):
     else:
         messages.info(request, 'INFO: No tracks available.')
         return redirect('room', room_id=room.id)
-    # if len(cleaned_search_results['track_id']) == 1:
-    #     # Scenario 1: Add a new track using a valid Spotify track name - Happy Path
-    #     TRACK_ID = cleaned_search_results['track_id'][0]
-    #     add_track_id_to_playlist(request, playlist_id, TRACK_ID) 
-    # elif len(cleaned_search_results['track_id']) > 1:
-    #     # Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
-    #     # Scenario 2b: Search for a new track to add to the playlist - Happy Path
-    #     context = cleaned_search_results
-    #     print(context)
-    #     return render(request, 'search_results.html', { context: 'context' } )  
-    # else:
-    #     messages.info(request, 'INFO: No tracks available.')
-    #     return redirect('room', room_id=room.id)
-    # Scenario 3: Add a new track using an invalid Spotify track name - Unhappy Path
-    # Handled by add_track_id_to_playlist
-    # Scenario 4: Add a duplicate track using a Spotify ID - Unhappy Path
-    # Handled by add_track_id_to_playlist
 
 @login_required
 def add_track_id_to_playlist(request, track_id):
@@ -253,14 +235,12 @@ def add_track_id_to_playlist(request, track_id):
     playlist = get_object_or_404(Playlist, room=room)
     playlist_id = playlist.playlist_id
 
-    # TO DO: Tracks are stored in database at user_playlist_tracks function
     if Track.objects.filter(playlist=playlist).filter(track_id=track_id).count() == 0:
         try: 
             # Scenario 1: Add a new track using a valid Spotify ID - Happy Path
-            # {
-            #         "snapshot_id": "MzgsNjM1NDNkN2I0MGNlNzBjNDc0NGYxODAyOWVhZmEyNjFlZWQxYTZiZg=="
-            # }
-            spotify.user_playlist_add_tracks(user=user_id,playlist_id=playlist_id, items=track_id, position=None)
+            spotify.user_playlist_add_tracks(user=user_id, playlist_id=playlist_id, tracks=[track_id], position=None)
+            track = spotify.track(track_id=track_id)
+            Track.objects.create(playlist=playlist, track_id=track_id, track_name=track['name'], track_artist=track['artists'][0]['name'])
         except:
             # Scenario 2: Add a new track using an invalid Spotify ID - Unhappy Path
             # {
@@ -268,7 +248,7 @@ def add_track_id_to_playlist(request, track_id):
             #     "status": 400,
             #     "message": "Payload contains a non-existing ID"
             # }
-            messages.error(request, 'ERROR at add_track_id: could not add track')
+            messages.error(request, request['error']['status'] + ' ' + request['error']['message'])
             return redirect('room', room_id=room.id)
         else:
             messages.success(request, 'SUCCESS? Add track id to playlist attempted.')
@@ -277,5 +257,4 @@ def add_track_id_to_playlist(request, track_id):
         messages.error(request, 'ERROR: Track already on playlist')
         return redirect('room', room_id=room.id) 
 
-    user_playlist_tracks(request, playlist_id)
     return redirect('room', room_id=request.user.active_room_id)

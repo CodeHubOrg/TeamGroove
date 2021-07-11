@@ -8,8 +8,7 @@
     <!-- Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
     Scenario 2b: Search for a new track to add to the playlist - Happy Path -->
     {% for item in context %} 
-        <a href="#" class="list-group-item list-group-item-action">{{ item.0 }}</a>
-        <!-- TO DO: <a href="{% url 'add_track_id_to_playlist' item.1 %}" class="list-group-item list-group-item-action">{{ item.0 }}</a> -->
+        <a href="{% url 'add_track_id_to_playlist' item.1 %}" class="list-group-item list-group-item-action">{{ item.0 }}</a>
     {% endfor %}
 </div>
 
