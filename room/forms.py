@@ -2,22 +2,32 @@ from django import forms
 
 from .models import Room
 
+
 class AddRoom(forms.ModelForm):
-    title = forms.CharField(label='Name of Your New Room', max_length=255)
+    title = forms.CharField(label="Name of Your New Room", max_length=255)
 
     class Meta:
         model = Room
-        fields = {'title',}
+        fields = {
+            "title",
+        }
+
 
 class EmailInvite(forms.Form):
-    email = forms.EmailField(label='E-mail of new Groover:', max_length=255)
+    email = forms.EmailField(label="E-mail of new Groover:", max_length=255)
+
 
 class AcceptInvitation(forms.Form):
-    invitation_code = forms.CharField(label='Enter the code from the invitation email:', max_length=20)
+    invitation_code = forms.CharField(
+        label="Enter the code from the invitation email:", max_length=20
+    )
+
 
 class EditRoom(forms.ModelForm):
-    title = forms.CharField(label='Edit Your Room Name', max_length=255)
+    title = forms.CharField(label="Edit Your Room Name", max_length=255)
 
     class Meta:
         model = Room
-        fields = {'title',}
+        fields = {
+            "title",
+        }

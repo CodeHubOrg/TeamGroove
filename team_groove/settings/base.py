@@ -11,17 +11,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 from pathlib import Path
 
-import environ
-
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # TeamGroove/
 APPS_DIR = ROOT_DIR / "team_groove"
-env = environ.Env()
-
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
-if READ_DOT_ENV_FILE:
-    # OS environment variables take precedence over variables from .env
-    env.read_env(str(ROOT_DIR / ".env"))
 
 CACHES_FOLDER = Path("./.spotify_caches/")
 CACHES_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -29,6 +21,10 @@ CACHES_FOLDER.mkdir(parents=True, exist_ok=True)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# From https://pypi.org/project/unittest-xml-reporting/, a recipe for
+# getting Django to output XML results.
+TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
+TEST_OUTPUT_DIR = 'test-results'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/

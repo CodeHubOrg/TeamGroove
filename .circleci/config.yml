@@ -1,0 +1,78 @@
+version: 2.1
+
+orbs:
+  # The python orb contains a set of prepackaged CircleCI configuration you can use repeatedly in your configuration files
+  # Orb commands and jobs help you with common scripting around a language/tool
+  # so you dont have to copy and paste it everywhere.
+  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
+  python: circleci/python@1.2
+
+workflows:
+  mainflow:  # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run. 
+    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
+    jobs:
+      - build-from-scratch
+      - build-and-test
+      - trial-run
+
+jobs:
+  build-from-scratch:  # This job illustrates what is required to get TeamGroove running from a relatively minimal system.
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - checkout
+      - run:
+          name: Install stuff
+          command: |
+            # Use apt update to ensure that apt finds the packages we want to install
+            sudo apt update
+            sudo apt install python3 python3-distutils curl -y
+            # This is the recommended way to install poetry, from https://python-poetry.org/docs/.
+            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+            # Use this script installed by the above line to modify the $PATH so poetry works properly.
+            source $HOME/.poetry/env
+            # Now set up the packages required by the pyproject.toml file.
+            poetry install
+            # Do we have a working installation? Try running the unit tests.
+            mkdir -p test-results
+            poetry run python manage.py test
+      - store_test_results:
+          path: test-results
+  build-and-test:
+    docker:
+      - image: cimg/python:3.8
+    # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
+    # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
+    # Then run your tests!
+    # CircleCI will report the results back to your VCS provider.
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: poetry
+      - run:
+          name: Run tests
+          # This assumes pytest is installed via the install-package step above
+          command: |
+            mkdir -p test-results
+            poetry run python manage.py test
+      - store_test_results:
+          path: test-results
+  trial-run:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - python/install-packages:  
+          pkg-manager: poetry
+      - run:
+          command: |
+            export SECRET_KEY=123456
+            export DJANGO_SUPERUSER_USERNAME=tgadmin
+            export DJANGO_SUPERUSER_PASSWORD=123456
+            export DJANGO_SUPERUSER_EMAIL=tgadmin@mailinator.com
+            poetry run python3 manage.py migrate
+            poetry run python3 manage.py createsuperuser --noinput
+            timeout --preserve-status 10 poetry run python3 manage.py runserver 8081
+          
+     
