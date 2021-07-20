@@ -67,7 +67,9 @@
                 <hr>
                 <h5>Playlists for the Room:</h5>
                 {% for playlist in playlists %}
-                    <p>{{ playlist }}</p>
+                    <hr>
+                    <p>{{ playlist }} </p>
+                    <p><a href="{% url 'show_user_playlist_tracks' playlist.playlist_id %}" class="btn btn-success btn-small"><i class="fa fa-commenting" aria-hidden="true"></i> Vote on Playlist Tracks?</a></p>
                 {% endfor %}
             </div>
         </div>
@@ -78,12 +80,12 @@
     <h5>Room Owner Actions:</h5>
     <hr>
         <div class="col-4">
-            <a href="{% url 'edit_room' %}" class="btn btn-primary btn-block">Edit Room Name</a>
+            <a href="{% url 'edit_room' %}" class="btn btn-primary btn-block"><i class="fa fa-edit" aria-hidden="true"></i> Edit Room Name</a>
             <hr>
             {% if active_room.created_by == request.user %}
                 <a href="{% url 'invite' %}" class="btn btn-secondary btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> Invite Groovers to Join Your Room</a>
-                <a href="{% url 'authorize_with_spotify' %}" class="btn btn-success btn-block"><i class="fa fa-eye" aria-hidden="true"></i> View Your Spotify Playlists</a>
-                <a href="#" class="btn btn-success btn-block"><i class="fa fa-eye" aria-hidden="true"></i> View Your YouTube Playlists</a>
+                <a href="{% url 'authorize_with_spotify' %}" class="btn btn-success btn-block"><i class="fa fa-spotify" aria-hidden="true"></i> View Your Spotify Playlists</a>
+                <a href="#" class="btn btn-success btn-block"><i class="fa fa-youtube" aria-hidden="true"></i> View Your YouTube Playlists</a>
             {% endif %}
         </div>
 {% endif %}

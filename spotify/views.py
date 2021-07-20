@@ -6,7 +6,7 @@ from django.conf import settings
 
 import spotipy
 
-from .models import Playlist
+from .models import Playlist, Track
 from room.models import Room
 
 
@@ -82,22 +82,67 @@ def user_playlist_tracks(request, playlist_id):
 
 @login_required
 def add_playlist_to_room(request, playlist_id):
-    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
+    room = get_object_or_404(
+        Room,
+        pk=request.user.active_room_id,
+        created_by=request.user,
+        status=Room.ACTIVE,
+        members__in=[request.user],
+    )
 
-    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    cache_handler = spotipy.cache_handler.CacheFileHandler(
+        cache_path=session_cache_path(request)
+    )
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
 
     spotify = spotipy.Spotify(auth_manager=auth_manager)
-    user_playlist_tracks = spotify.playlist_items(playlist_id,
-                                                    offset=0,
-                                                    fields='items.track.id, items.track.name')
-    
+    user_playlist_tracks = spotify.playlist_items(
+        playlist_id, offset=0, fields="items.track.id, items.track.name"
+    )
+
     results = spotify.playlist(playlist_id)
-    playlist_name = results['name']
+    playlist_name = results["name"]
 
-    playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
-    # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
+    if Playlist.objects.filter(room=room).filter(playlist_id=playlist_id).count() == 0:
+        playlist = Playlist.objects.create(
+            room=room,
+            created_by=request.user,
+            playlist_id=playlist_id,
+            playlist_name=playlist_name,
+        )
+    else:
+        messages.info(request, "Playlist is already added to your room.")
+        return redirect("room", room_id=request.user.active_room_id)
 
-    messages.info(request, "Your playlist was added to your room.")
+    # This is identical to the code in user_playlist_tracks function above.
+    # TODO: Refactor into a function
+    list_of_track_ids = []
 
-    return redirect('room', room_id=request.user.active_room_id)
+    for track in user_playlist_tracks["items"]:
+        list_of_track_ids.append(track["track"]["id"])
+
+    if not list_of_track_ids:
+        messages.info(request, "There are no tracks in your playlist.")
+
+        return redirect("room", room_id=request.user.active_room_id)
+
+    else:
+        # Fix for bug where more than 50 tracks in a playlist causes an error.
+        max_tracks_per_call = 50
+
+        for start in range(0, len(list_of_track_ids), max_tracks_per_call):
+            results = spotify.tracks(
+                list_of_track_ids[start : start + max_tracks_per_call]
+            )
+            for track in results["tracks"]:
+                # Add the playlist tracks to our db so we can vote on them.
+                Track.objects.create(
+                    playlist=playlist,
+                    track_id=track["id"],
+                    track_name=track["name"],
+                    track_artist=track["artists"][0]["name"],
+                )
+
+        messages.info(request, "Your playlist was added to your room.")
+
+        return redirect("room", room_id=request.user.active_room_id)

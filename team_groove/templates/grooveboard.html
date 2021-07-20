@@ -67,7 +67,7 @@
                         <a href="{% url 'invite' %}" class="btn btn-primary btn-block"><i class="fa fa-envelope" aria-hidden="true"></i> Invite Groovers to Join Your Room</a>
                     {% endif %}
     
-                    <a href="{% url 'room' active_room.id %}" class="btn btn-secondary mt-2 btn-block"><i class="fa fa-users" aria-hidden="true"></i>Room Details</a>
+                    <a href="{% url 'room' active_room.id %}" class="btn btn-secondary mt-2 btn-block"><i class="fa fa-users" aria-hidden="true"></i> Room Details</a>
                 </div>
             </div>
         {% endif %}
@@ -80,7 +80,7 @@
                     <h5 class="card-title"></h5>
                     <p class="card-text"></p>
                 </div>
-                <a href="{% url 'add_room' %}" class="btn btn-info btn-block"><i class="fa fa-users" aria-hidden="true"></i>Create a New Room</a>
+                <a href="{% url 'add_room' %}" class="btn btn-info btn-block"><i class="fa fa-pencil" aria-hidden="true"></i> Create a New Room</a>
             </div>
         </div>
     </div>
@@ -115,9 +115,9 @@
                             {% endif %}</p>
                             <hr>
                         </div>
-                        <a href="{% url 'activate_room' room.id %}" class="btn btn-success mt-2 btn-block">Activate Room</a>
+                        <a href="{% url 'activate_room' room.id %}" class="btn btn-success mt-2 btn-block"><i class="fa fa-music" aria-hidden="true"></i> Activate Room</a>
                         {% if room.created_by == request.user %}
-                            <a href="{% url 'delete_room' room.id %}" class="btn btn-danger mt-2 btn-block">Delete Room</a>
+                            <a href="{% url 'delete_room' room.id %}" class="btn btn-danger mt-2 btn-block"><i class="fa fa-trash" aria-hidden="true"></i> Delete Room</a>
                         {% endif %}
                     </div>
                 </div>

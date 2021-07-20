@@ -19,14 +19,7 @@ class Track(models.Model):
     playlist = models.ForeignKey(Playlist, related_name='tracks', on_delete=models.CASCADE)
     track_id = models.CharField(max_length=50)
     track_name = models.CharField(max_length=255)
+    track_artist = models.CharField(max_length=255)
 
     def __str__(self):
         return self.track_name
-
-class Vote(models.Model):
-    track = models.ForeignKey(Track, related_name='votes', on_delete=models.CASCADE)
-    playlist = models.ForeignKey(Playlist, related_name='playlists', on_delete=models.CASCADE)
-    created_by = models.ForeignKey(CustomUser, related_name='created_vote', on_delete=models.CASCADE)
-    # Not sure how we are going to handle voting? 0-5 or 0-10, etc. Do we check for the same person voting
-    # multiple times and trying to rig the playlist for their favourite/hated track?
-    # vote = models.IntegerField()

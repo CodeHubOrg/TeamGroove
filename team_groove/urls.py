@@ -38,6 +38,12 @@ from spotify.views import (
     add_playlist_to_room,
 )
 
+from vote.views import (
+    show_user_playlist_tracks,
+    spotify_up_vote,
+    spotify_down_vote,
+)
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", FrontPageView.as_view(), name="frontpage"),
@@ -78,6 +84,21 @@ urlpatterns = [
         "spotify/add_playlist_to_room/<playlist_id>/",
         add_playlist_to_room,
         name="add_playlist_to_room",
+    ),
+    path(
+        "vote/show_user_playlist_tracks/<playlist_id>/",
+        show_user_playlist_tracks,
+        name="show_user_playlist_tracks",
+    ),
+    path(
+        "vote/spotify_up_vote/<playlist_id>/<track_id>/",
+        spotify_up_vote,
+        name="spotify_up_vote",
+    ),
+    path(
+        "vote/spotify_down_vote/<playlist_id>/<track_id>/",
+        spotify_down_vote,
+        name="spotify_down_vote",
     ),
     path("signup/", signup, name="signup"),
     path(
