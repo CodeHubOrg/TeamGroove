@@ -1,4 +1,5 @@
 import random
+import logging
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -10,6 +11,8 @@ from .models import Room, Invitation
 from users.models import CustomUser
 from spotify.models import Playlist
 from .email_utils import send_invitation, send_invitation_accepted
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -38,6 +41,7 @@ def activate_room(request, room_id):
     room = get_object_or_404(
         Room, pk=room_id, status=Room.ACTIVE, members__in=[request.user]
     )
+    logger.info("Activating room ID=%s", room.id)
     request.user.active_room_id = room.id
     request.user.save()
 
@@ -51,6 +55,7 @@ def room(request, room_id):
     room = get_object_or_404(
         Room, pk=room_id, status=Room.ACTIVE, members__in=[request.user]
     )
+    logger.info("Viewing room ID=%s", room.id)
     invitations = room.invitations.filter(status=Invitation.INVITED)
 
     playlists = room.playlists.filter(room=room_id)
@@ -146,6 +151,7 @@ def edit_room(request):
         status=Room.ACTIVE,
         members__in=[request.user],
     )
+    logger.info("Editing room ID=%s", room.id)
 
     if request.method == "POST":
         form = EditRoom(request.POST)
@@ -167,6 +173,7 @@ def edit_room(request):
 @login_required
 def delete_room(request, room_id):
     room = get_object_or_404(Room, pk=room_id, created_by=request.user)
+    logger.info("Deleting room ID=%s", room.id)
     room.delete()
 
     messages.info(request, "Your room was deleted.")
