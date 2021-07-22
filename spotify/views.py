@@ -46,58 +46,19 @@ def authorize_with_spotify(request, spotify_code=None):
 def user_playlist_tracks(request, playlist_id):
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    
     spotify = spotipy.Spotify(auth_manager=auth_manager)
-
     user_playlist_tracks = spotify.playlist_items(playlist_id,
                                                   offset=0,
                                                   fields='items.track.id, items.track.name')
+    
+    results = spotify.playlist(playlist_id)
+    playlist_name = results['name']
     
     list_of_track_ids = []
 
     for track in user_playlist_tracks['items']:
         list_of_track_ids.append(track['track']['id'])
-
-    results = spotify.tracks(list_of_track_ids)
-    
-    track_name_artist = []
-
-    for track in results['tracks']:
-        track_name_artist.append(track['name'] + ' - ' + track['artists'][0]['name'])
-
-    context = {
-        'playlist_id': playlist_id,
-        'track_name_artist': track_name_artist
-    }    
-
-    return render(request, 'user_playlist_tracks.html', context)
-
-@login_required
-def add_playlist_to_room(request, playlist_id):
-    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
-    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
-    spotify = spotipy.Spotify(auth_manager=auth_manager)
-
-    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
-
-    if Playlist.objects.filter(room=room).filter(playlist_id=playlist_id).count() == 0:
-        playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id)
-        # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
-        messages.info(request, "Your playlist was added to your room.")
-    else:
-        playlist = Playlist.objects.get(room=room, created_by=request.user, playlist_id=playlist_id)
-        messages.info(request, "Playlist is already added to your room.")
-
-    # TO DO: re-factor from def user_playlist_tracks
-    # TO DO: place in .utils file
-    user_playlist_tracks = spotify.playlist_items(playlist_id,
-                                                  offset=0,
-                                                  fields='items.track.id, items.track.name')
-    list_of_track_ids = []
-
-    for track in user_playlist_tracks['items']:
-        list_of_track_ids.append(track['track']['id'])
-
-    results = spotify.tracks(list_of_track_ids)
     
     if not list_of_track_ids:
         messages.info(request, "There are no tracks in your playlist.")
@@ -115,10 +76,36 @@ def add_playlist_to_room(request, playlist_id):
 
         context = {
             'playlist_id': playlist_id,
+            'playlist_name': playlist_name,
             'track_name_artist': track_name_artist
         }    
         
         return render(request, 'user_playlist_tracks.html', context)
+
+@login_required
+def add_playlist_to_room(request, playlist_id):
+    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
+
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+ 
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    user_playlist_tracks = spotify.playlist_items(playlist_id,
+                                                    offset=0,
+                                                    fields='items.track.id, items.track.name')
+
+    results = spotify.playlist(playlist_id)
+    playlist_name = results['name']
+
+    if Playlist.objects.filter(room=room).filter(playlist_id=playlist_id).count() == 0:
+        playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id)
+        # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
+        messages.info(request, "Your playlist was added to your room.")
+    else:
+        playlist = Playlist.objects.get(room=room, created_by=request.user, playlist_id=playlist_id)
+        messages.info(request, "Playlist is already added to your room.")
+    
+    return redirect('room', room_id=request.user.active_room_id)
 
 @login_required
 def add_playlist_to_room(request, playlist_id):
