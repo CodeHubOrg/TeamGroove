@@ -105,26 +105,6 @@ def add_playlist_to_room(request, playlist_id):
         playlist = Playlist.objects.get(room=room, created_by=request.user, playlist_id=playlist_id)
         messages.info(request, "Playlist is already added to your room.")
     
-    return redirect('room', room_id=request.user.active_room_id)
-
-@login_required
-def add_playlist_to_room(request, playlist_id):
-    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
-
-    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
-    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
-
-    spotify = spotipy.Spotify(auth_manager=auth_manager)
-    user_playlist_tracks = spotify.playlist_items(playlist_id,
-                                                offset=0,
-                                                fields='items.track.id, items.track.name')
-    
-    results = spotify.playlist(playlist_id)
-    playlist_name = results['name']
-
-    playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
-    # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
-
     # for all results (tracks), if not already in database, add to database; else, pass
     for track in results['tracks']:
         if Track.objects.filter(playlist=playlist).filter(track_id=track['id']).count() == 0: 
@@ -132,7 +112,7 @@ def add_playlist_to_room(request, playlist_id):
         else:
             pass
 
-    return render(request, 'grooveboard.html')
+    return redirect('room', room_id=request.user.active_room_id)
 
 # Scenario 1: Add a new track using a valid Spotify track name - Happy Path
 # Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
