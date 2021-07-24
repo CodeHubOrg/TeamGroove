@@ -67,8 +67,7 @@
                 <hr>
                 <h5>Playlists for the Room:</h5>
                 {% for playlist in playlists %}
-                    <p>{{ playlist }}</p>
-                    <a href="{% url 'search_track_name' playlist.playlist_id %}" class="btn btn-primary btn-block">Search track name for {{ playlist.playlist_name }}</a>
+                    <p>{{ playlist }} <a href="{% url 'search_track_name' playlist_id=playlist.playlist_id %}" class="btn btn-outline-info">Add to playlist</a></p>
                 {% endfor %}
             </div>
         </div>

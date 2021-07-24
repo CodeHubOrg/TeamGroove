@@ -2,12 +2,15 @@
 
 {% block content %}
 
+<h3>Search tracks for playlist {{ playlist_id }}</h3>
+
 <div class="row">
     <div class="col-4">
         <form method="POST" action="." id="searchtrackname">
             {% csrf_token %}
-            <input name="query" type="text" placeholder="Track Name"/>
-            <button class="btn btn-outline-info" type="submit">Search</button>
+            <p><input name="query" type="text" placeholder="Track Name"/></p>
+            <p><input name="playlist_id" type="text" value="{{ playlist_id }}"/></p>
+            <p><button class="btn btn-outline-info" type="submit">Search</button></p>
         </form>
     </div>
 </div>

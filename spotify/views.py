@@ -92,13 +92,13 @@ def add_playlist_to_room(request, playlist_id):
     spotify = spotipy.Spotify(auth_manager=auth_manager)
     user_playlist_tracks = spotify.playlist_items(playlist_id,
                                                     offset=0,
-                                                    fields='items.track.id, items.track.name')
+                                                    fields='items.track.id, items.track.name, items.track.artists.name')
 
     results = spotify.playlist(playlist_id)
     playlist_name = results['name']
 
     if Playlist.objects.filter(room=room).filter(playlist_id=playlist_id).count() == 0:
-        playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id)
+        playlist = Playlist.objects.create(room=room, created_by=request.user, playlist_id=playlist_id, playlist_name=playlist_name)
         # Need to add the tracks from the playlist to our db here so we can let people vote on them later?
         messages.info(request, "Your playlist was added to your room.")
     else:
@@ -106,9 +106,9 @@ def add_playlist_to_room(request, playlist_id):
         messages.info(request, "Playlist is already added to your room.")
     
     # for all results (tracks), if not already in database, add to database; else, pass
-    for track in results['tracks']:
-        if Track.objects.filter(playlist=playlist).filter(track_id=track['id']).count() == 0: 
-            Track.objects.create(playlist=playlist, track_id=track['id'], track_name=track['name'], track_artist = track['artists'][0]['name'])
+    for track in user_playlist_tracks['items']:
+        if Track.objects.filter(playlist=playlist).filter(track_id=track['track']['id']).count() == 0: 
+            Track.objects.create(playlist=playlist, track_id=track['track']['id'], track_name=track['track']['name'], track_artist = track['track']['artists'][0]['name'])
         else:
             pass
 
@@ -118,18 +118,13 @@ def add_playlist_to_room(request, playlist_id):
 # Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
 # Scenario 2b: Search for a new track to add to the playlist - Happy Path
 @login_required
-def search_track_name(request, playlist_id=None):
-    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
-    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
-    spotify = spotipy.Spotify(auth_manager=auth_manager)
-
+def search_track_name(request, playlist_id):
     room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
     
-    if playlist_id == None:
-            playlist = get_object_or_404(Playlist, room=room)
-            playlist_id = playlist.playlist_id
-    else:
-        pass
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
 
     MAX_SEARCH_LIMIT   = 2
     NEXT               = 'https://api.spotify.com'
@@ -141,6 +136,8 @@ def search_track_name(request, playlist_id=None):
 
         if form.is_valid():
             query = request.POST.get('query')
+            playlist_id = request.POST.get('playlist_id')   
+            print('PLAYLIST ID: ', playlist_id)       
 
             track_name_artist_album = []
             track_id = []
@@ -170,8 +167,7 @@ def search_track_name(request, playlist_id=None):
             return search_results(request, tuple_search_results, playlist_id)
     else:
         form = SearchTrackName()
-
-    return render(request, 'search_track_name.html', {'form': form})
+        return render(request, 'search_track_name.html', {'form': form, 'playlist_id': playlist_id})
 
 def search_results(request, cleaned_search_results, playlist_id):
     room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
@@ -184,23 +180,23 @@ def search_results(request, cleaned_search_results, playlist_id):
         # Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
         # Scenario 2b: Search for a new track to add to the playlist - Happy Path
         context = cleaned_search_results
-        return render(request, 'search_results.html', { 'context': context } )  
+        return render(request, 'search_results.html', { 'context': context, 'playlist_id': playlist_id } )  
     else:
         messages.info(request, 'INFO: No tracks available.')
         return redirect('room', room_id=room.id)
 
 @login_required
-def add_track_id_to_playlist(request, track_id):
+def add_track_id_to_playlist(request, playlist_id, track_id):
+    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
+    playlist = Playlist.objects.get(room=room, created_by=request.user, playlist_id=playlist_id)    
+    
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
     current_user = spotify.current_user()
     user_id = current_user['id']
-
-    room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
-    playlist = get_object_or_404(Playlist, room=room)
-    playlist_id = playlist.playlist_id
 
     if Track.objects.filter(playlist=playlist).filter(track_id=track_id).count() == 0:
         try: 
@@ -219,9 +215,8 @@ def add_track_id_to_playlist(request, track_id):
             return redirect('room', room_id=room.id)
         else:
             messages.success(request, 'SUCCESS? Add track id to playlist attempted.')
+            return redirect('room', room_id=request.user.active_room_id)
     else:
         # Scenario 3: Add a duplicate track using a Spotify ID - Unhappy Path
         messages.error(request, 'ERROR: Track already on playlist')
         return redirect('room', room_id=room.id) 
-
-    return redirect('room', room_id=request.user.active_room_id)

@@ -83,10 +83,26 @@ urlpatterns = [
         add_playlist_to_room,
         name="add_playlist_to_room",
     ),
-    path('spotify/search_track_name/<str:playlist_id>', search_track_name, name='search_track_name'),
-    path('spotify/search_track_name/', search_track_name, name='search_track_name'),
-    path('spotify/search_results/', search_results, name='search_results'),
-    path('spotify/add_track_id_to_playlist/<str:track_id>', add_track_id_to_playlist, name='add_track_id_to_playlist'), 
+    path(
+        "spotify/search_track_name/<playlist_id>/", 
+        search_track_name, 
+        name="search_track_name"
+    ),
+    path(
+        "spotify/search_track_name/", 
+        search_track_name, 
+        name="search_track_name"
+    ),
+    path(
+        "spotify/search_results/<playlist_id>/", 
+        search_results, 
+        name="search_results"
+    ),
+    path(
+        "spotify/add_track_id_to_playlist/<track_id>/", 
+        add_track_id_to_playlist, 
+        name="add_track_id_to_playlist"
+    ), 
     path("signup/", signup, name="signup"),
     path(
         "login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"
