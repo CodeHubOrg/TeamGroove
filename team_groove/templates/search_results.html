@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h3>Add track to playlist {{ playlist_id }}</h3>
+<h3>Click on track to add to playlist {{ playlist_id }}</h3>
 
 <div class="list-group">
     <!-- Scenario 2a: Search for a new track using an ambiguous Spotify track name - Happy Path
@@ -10,6 +10,12 @@
     {% for item in context %} 
         <a href="{% url 'add_track_id_to_playlist' playlist_id item.1 %}" class="list-group-item list-group-item-action">{{ item.0 }}</a>
     {% endfor %}
+</div>
+
+<hr>
+
+<div class="form-group">
+    <button class="btn btn-outline-danger" type="button" value="Back" onClick="javascript:history.go(-1);">Back</button>
 </div>
 
 {% endblock %}

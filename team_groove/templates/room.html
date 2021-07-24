@@ -66,9 +66,18 @@
                 {% endfor %}
                 <hr>
                 <h5>Playlists for the Room:</h5>
-                {% for playlist in playlists %}
-                    <p>{{ playlist }} <a href="{% url 'search_track_name' playlist_id=playlist.playlist_id %}" class="btn btn-outline-info">Add to playlist</a></p>
-                {% endfor %}
+                <table class="table table-responsive-sm table-borderless">
+                    {% for playlist in playlists %}
+                        <tr> 
+                            <td>
+                                {{ playlist }}
+                            </td> 
+                            <td>
+                                <a href="{% url 'search_track_name' playlist_id=playlist.playlist_id %}" class="btn btn-outline-info">Add to playlist</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
     </div>
