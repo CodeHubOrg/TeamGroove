@@ -99,7 +99,7 @@ urlpatterns = [
         name="search_results"
     ),
     path(
-        "spotify/add_track_id_to_playlist/<track_id>/", 
+        "spotify/add_track_id_to_playlist/<playlist_id>/<track_id>/", 
         add_track_id_to_playlist, 
         name="add_track_id_to_playlist"
     ), 
