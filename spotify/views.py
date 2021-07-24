@@ -126,7 +126,7 @@ def search_track_name(request, playlist_id):
 
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
-    MAX_SEARCH_LIMIT   = 2
+    MAX_SEARCH_LIMIT   = 10
     NEXT               = 'https://api.spotify.com'
     OFFSET             = 0
     OFFSET_UPPER_LIMIT = MAX_SEARCH_LIMIT*2
