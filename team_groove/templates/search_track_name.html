@@ -9,7 +9,7 @@
         <form method="POST" action="." id="searchtrackname">
             {% csrf_token %}
             <p><input name="query" type="text" placeholder="Track Name"/></p>
-            <p><input name="playlist_id" type="text" value="{{ playlist_id }}"/></p>
+            <p><input name="playlist_id" type="text" value="{{ playlist_id }}" disabled="true" hidden="true"/></p>
             <p><button class="btn btn-outline-info" type="submit">Search</button></p>
         </form>
     </div>
