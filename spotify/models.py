@@ -19,6 +19,7 @@ class Track(models.Model):
     playlist = models.ForeignKey(Playlist, related_name='tracks', on_delete=models.CASCADE)
     track_id = models.CharField(max_length=50)
     track_name = models.CharField(max_length=255)
+    track_artist = models.CharField(max_length=255)
 
     def __str__(self):
         return self.track_name
