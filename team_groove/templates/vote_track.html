@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Tracks to Vote On | {% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="media">
+                <img class="mr-3">
+                <div class="media-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>Tracks in playlist: {{ playlist.playlist_name }}</h3>
+
+    <div class="list-group">
+        {% for track in tracks %}
+            <a href="#" class="list-group-item list-group-item-action">{{ track.track_name }} - {{ track.track_artist }}    - 
+                {% for idx, vote in votes.items %}
+                    {% if idx|stringformat:"s" == track.track_name|stringformat:"s" %}
+                            Total Votes:  {{ vote }}
+                    {% endif %}                     
+                {% endfor %}
+            </a>
+            
+            <a href="{% url 'spotify_up_vote' playlist.playlist_id track.track_id %}" class="btn btn-success"><i class="fa fa-chevron-up" aria-hidden="true"></i> Upvote</a>
+            <hr>
+            <a href="{% url 'spotify_down_vote' playlist.playlist_id track.track_id %}" class="btn btn-success"><i class="fa fa-chevron-down" aria-hidden="true"></i> Downvote</a>
+        {% endfor %}        
+    </div>
+    
+
+{% endblock %}
