@@ -54,6 +54,7 @@ def get_prediction(image_bytes):
 def image_search(request):
     image_uri = None
     predicted_label = None
+    results = None
 
     if request.method == 'POST':
         form = ImageUploadForm(request.POST, request.FILES)
