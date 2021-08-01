@@ -68,6 +68,7 @@ def image_search(request):
             # get predicted label
             try:
                 predicted_label = get_prediction(image_bytes)
+                # Perform a search against Spotify using the predicted label to get some suggestions
                 results = search(request, predicted_label)
             except RuntimeError as re:
                 logger.error("Prediction Error = %s", re) 
