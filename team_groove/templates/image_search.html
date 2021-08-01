@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Hal Search | {% endblock %}
+
+{% block content %}
+    <h1>Image Search App</h1>
+    <p>This uses a pre-trained PyTorch DenseNet model that will try to classify the selected image according to ImageNet labels. If it classifies the image it will perform a search on Spotify based on the predicted label.</p>
+
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" id="btnUpload" class="btn btn-primary">Upload Image</button>
+    </form>
+
+    {% if image_uri is not None %}
+        {% if predicted_label is not None %}
+            <div class="alert alert-primary" role="alert">
+                Predicted label: <b>{{ predicted_label }}</b>
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                Prediction error. No label predicted.
+            </div>
+        {% endif %}
+
+        <img src="{{ image_uri }}" class="img-fluid" alt="Uploaded image"
+            style="max-width: min(500px, 100%); height: auto; margin-top: 30px;">
+    {% endif %}
+    
+    <h1>Track Search Results</h1>
+    {% for track in results %}
+        <a href="#" class="list-group-item list-group-item-action">{{ track }}</a>    
+    {% endfor %}
+{% endblock %}
