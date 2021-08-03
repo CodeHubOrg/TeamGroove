@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 
 from core.views import FrontPageView
 from users.views import signup
@@ -37,10 +39,15 @@ from spotify.views import (
     authorize_with_spotify,
     user_playlist_tracks,
     add_playlist_to_room,
-    search_track_name, 
-    search_results, 
-    add_track_id_to_playlist
+    search_track_name,
+    search_results,
+    add_track_id_to_playlist,
 )
+
+from image_search.views import (
+    image_search,
+)
+
 from vote.views import (
     show_user_playlist_tracks,
     spotify_up_vote,
@@ -89,24 +96,18 @@ urlpatterns = [
         name="add_playlist_to_room",
     ),
     path(
-        "spotify/search_track_name/<playlist_id>/", 
-        search_track_name, 
-        name="search_track_name"
+        "spotify/search_track_name/<playlist_id>/",
+        search_track_name,
+        name="search_track_name",
+    ),
+    path("spotify/search_track_name/", search_track_name, name="search_track_name"),
+    path(
+        "spotify/search_results/<playlist_id>/", search_results, name="search_results"
     ),
     path(
-        "spotify/search_track_name/", 
-        search_track_name, 
-        name="search_track_name"
-    ),
-    path(
-        "spotify/search_results/<playlist_id>/", 
-        search_results, 
-        name="search_results"
-    ),
-    path(
-        "spotify/add_track_id_to_playlist/<playlist_id>/<track_id>/", 
-        add_track_id_to_playlist, 
-        name="add_track_id_to_playlist"
+        "spotify/add_track_id_to_playlist/<playlist_id>/<track_id>/",
+        add_track_id_to_playlist,
+        name="add_track_id_to_playlist",
     ),
     path(
         "vote/show_user_playlist_tracks/<playlist_id>/",
@@ -122,7 +123,8 @@ urlpatterns = [
         "vote/spotify_down_vote/<playlist_id>/<track_id>/",
         spotify_down_vote,
         name="spotify_down_vote",
-    ), 
+    ),
+    path("image_search/image_search/", image_search, name="image_search"),
     path("signup/", signup, name="signup"),
     path(
         "login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"
@@ -154,4 +156,4 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

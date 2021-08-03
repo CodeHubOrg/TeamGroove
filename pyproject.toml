@@ -6,12 +6,13 @@ authors = ["stiffneckjim <22213990+stiffneckjim@users.noreply.github.com>"]
 license = "GNU General Public License v3.0"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.2"
 requests = "^2.25.1"
 spotipy = "^2.18"
 Django = "^3.1.7"
 django-environ = "^0.4.5"
 unittest-xml-reporting = "^3.0.4"
+torchvision = "^0.10.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"

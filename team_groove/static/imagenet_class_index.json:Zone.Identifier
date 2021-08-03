@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://stefanbschneider.github.io/
+HostUrl=https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json
