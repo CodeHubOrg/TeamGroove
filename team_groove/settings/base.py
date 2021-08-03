@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "room",
     "spotify",
     "image_search",
+    "vote",
 ]
 
 MIDDLEWARE = [
