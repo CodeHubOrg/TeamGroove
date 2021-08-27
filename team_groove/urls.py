@@ -19,6 +19,9 @@ from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
+from rest_framework.urlpatterns import format_suffix_patterns
+from rest_logon.views import LogIn, SignUp
+
 from core.views import FrontPageView
 from users.views import signup
 from grooveboard.views import grooveboard
@@ -156,4 +159,6 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path('v1/rest_logon/signup/', SignUp.as_view(), name='rest-signup'),
+    path('v1/rest_logon/login/', LogIn.as_view(), name='rest-login'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
