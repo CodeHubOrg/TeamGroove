@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     "spotify",
     "image_search",
     "vote",
+    "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
