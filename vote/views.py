@@ -84,15 +84,46 @@ def spotify_down_vote(request, playlist_id, track_id):
 
 
 def vote_for_track(request, playlist, tracks, track, room, vote_type):
-    # If the track in a playlist in a room hasn't 
-    # been voted on before by the user then create a vote for it.
+    # If the track in a playlist in a room has 
+    # been voted on before by the user then update the vote for it.
     if (
         Vote.objects.filter(playlist=playlist)
         .filter(track=track)
         .filter(created_by=request.user)
         .count()
-        == 0
-    ):
+        >0
+    ): 
+        # If the upvote already exists, then unset upvote
+        # If the downvote already exists, then unset downvote
+        # If upvote already exists and then downvote is clicked, unset upvote and set downvote
+        # If downvote already exists and then upvote is clicked, unset downvote and set upvote
+        # If the track in a playlist in a room hasn't 
+        # been voted on before by the user then create a vote for it.
+        vote = get_object_or_404(
+            Vote, playlist_id=playlist.pk, track_id=track.pk, created_by=request.user
+        )
+        if vote.track_vote == 1:
+            if vote_type == 1:
+                vote.track_vote -=1
+                vote.save()
+            else:
+                vote.track_vote -= 2
+                vote.save()
+        elif vote.track_vote == -1:
+            if vote_type == 1:
+                vote.track_vote +=2
+                vote.save()
+            else:
+                vote.track_vote += 1
+                vote.save()
+        else:
+            if vote_type == 1:
+                vote.track_vote +=1
+                vote.save()
+            else:
+                vote.track_vote -= 1
+                vote.save()
+    else:
         Vote.objects.create(
             playlist=playlist, track=track, created_by=request.user, room=room
         )
@@ -105,8 +136,6 @@ def vote_for_track(request, playlist, tracks, track, room, vote_type):
         else:
             vote.track_vote -= 1
             vote.save()
-    else:
-        messages.info(request, "You have already voted for this track.")
 
     votes = {}
     for track in tracks:
