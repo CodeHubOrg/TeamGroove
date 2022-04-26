@@ -12,6 +12,7 @@ spotipy = "^2.18"
 Django = ">=3.2.13"
 django-environ = "^0.4.5"
 unittest-xml-reporting = "^3.0.4"
+sqlparse = ">=0.4.2"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"
