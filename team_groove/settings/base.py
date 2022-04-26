@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     "grooveboard",
     "room",
     "spotify",
-    "image_search",
     "vote",
 ]
 

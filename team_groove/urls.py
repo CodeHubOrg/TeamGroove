@@ -44,10 +44,6 @@ from spotify.views import (
     add_track_id_to_playlist,
 )
 
-from image_search.views import (
-    image_search,
-)
-
 from vote.views import (
     show_user_playlist_tracks,
     spotify_up_vote,
@@ -124,7 +120,6 @@ urlpatterns = [
         spotify_down_vote,
         name="spotify_down_vote",
     ),
-    path("image_search/image_search/", image_search, name="image_search"),
     path("signup/", signup, name="signup"),
     path(
         "login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"
