@@ -1,29 +1,41 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 
 <h3>Search track names for playlist {{ playlist_id }}</h3>
 
 <form method="POST" action="." id="searchtrackname">
-    {% csrf_token %}
-        <div class="form-group">
-            <input name="query" type="text" placeholder="Track Name" class="form-control input-md" required="true"/>
-        </div>
-        <div class="form-group">
-            <input name="playlist_id" type="text" value="{{ playlist_id }}" class="input-large" hidden="true" readonly/>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </div>
+  {% csrf_token %}
+  <div class="form-group">
+    <input
+      name="query"
+      type="text"
+      placeholder="Track Name"
+      class="form-control input-md"
+      required="true"
+    />
+  </div>
+  <div class="form-group">
+    <input
+      name="playlist_id"
+      type="text"
+      value="{{ playlist_id }}"
+      class="input-large"
+      hidden="true"
+      readonly
+    />
+  </div>
+  <div class="form-group">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+  </div>
 </form>
-<h3> Search for a track using HAL ;-)</h3>
-<div class ="form-group">
-    <a href="{% url 'image_search' %}" class="btn btn-outline-info">Search with HAL</a>
-</div>
-
-
 <div class="form-group">
-    <button class="btn btn-outline-danger" type="button" value="Back" onClick="javascript:history.go(-1);">Back</button>
+  <button
+    class="btn btn-outline-danger"
+    type="button"
+    value="Back"
+    onClick="javascript:history.go(-1);"
+  >
+    Back
+  </button>
 </div>
 
 {% endblock %}
