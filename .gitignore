@@ -142,3 +142,6 @@ workspace.xml
 
 # Stop local test runner results being added to repo
 *.xml
+
+# Stop random OS X files being added to repo
+.DS_Store
