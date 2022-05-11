@@ -9,7 +9,7 @@ from django.contrib import messages
 from .forms import AddRoom, EmailInvite, AcceptInvitation, EditRoom
 from .models import Room, Invitation
 from users.models import CustomUser
-from spotify.models import Playlist
+from playlist.models import Playlist
 from .email_utils import send_invitation, send_invitation_accepted
 
 logger = logging.getLogger(__name__)

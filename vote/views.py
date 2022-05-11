@@ -6,9 +6,10 @@ from django.conf import settings
 
 from django.db.models import Sum
 
-from spotify.models import Playlist, Track
+from playlist.models import Playlist, Track
 from room.models import Room
 from .models import Vote
+
 
 @login_required
 def show_user_playlist_tracks(request, playlist_id):
@@ -39,6 +40,7 @@ def show_user_playlist_tracks(request, playlist_id):
             "votes": votes,
         },
     )
+
 
 @login_required
 def spotify_up_vote(request, playlist_id, track_id):
@@ -84,7 +86,7 @@ def spotify_down_vote(request, playlist_id, track_id):
 
 
 def vote_for_track(request, playlist, tracks, track, room, vote_type):
-    # If the track in a playlist in a room hasn't 
+    # If the track in a playlist in a room hasn't
     # been voted on before by the user then create a vote for it.
     if (
         Vote.objects.filter(playlist=playlist)
