@@ -188,7 +188,7 @@ def search_results(request, cleaned_search_results, playlist_id):
 @login_required
 def add_track_id_to_playlist(request, playlist_id, track_id):
     room = get_object_or_404(Room, pk=request.user.active_room_id, created_by=request.user, status=Room.ACTIVE, members__in=[request.user])
-    playlist = Playlist.objects.get(room=room, created_by=request.user, playlist_id=playlist_id)    
+    playlist = s.get(room=room, created_by=request.user, playlist_id=playlist_id)    
     
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
