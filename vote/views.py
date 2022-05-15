@@ -10,6 +10,7 @@ from spotify.models import Playlist, Track
 from room.models import Room
 from .models import Vote
 
+
 @login_required
 def show_user_playlist_tracks(request, playlist_id):
 
@@ -40,6 +41,7 @@ def show_user_playlist_tracks(request, playlist_id):
         },
     )
 
+
 @login_required
 def spotify_up_vote(request, playlist_id, track_id):
 
@@ -51,16 +53,15 @@ def spotify_up_vote(request, playlist_id, track_id):
     tracks = Track.objects.filter(playlist_id=playlist)
     # If the track hasn't been voted on before by the user then create a vote for it.
     # call vote_for_track function passing 1 or -1
-    # If the track in a playlist in a room has 
+    # If the track in a playlist in a room has
     # been voted on before by the user then update the vote for it.
-    vote = Vote.objects.get_or_create(playlist=playlist, track=track, created_by=request.user, room=room)
+    (vote, _) = Vote.objects.get_or_create(
+        playlist=playlist, track=track, created_by=request.user, room=room
+    )
     vote.update_vote(vote_type=1)
 
-    return render(
-        request,
-        "vote_track.html",
-        {"tracks": tracks, "playlist": playlist, "votes": votes},
-    )
+    return show_user_playlist_tracks(request, playlist_id)
+
 
 @login_required
 def spotify_down_vote(request, playlist_id, track_id):
@@ -72,11 +73,9 @@ def spotify_down_vote(request, playlist_id, track_id):
     track = get_object_or_404(Track, playlist_id=playlist.pk, track_id=track_id)
     tracks = Track.objects.filter(playlist_id=playlist)
 
-    vote = Vote.objects.get_or_create(playlist=playlist, track=track, created_by=request.user, room=room)
+    (vote, _) = Vote.objects.get_or_create(
+        playlist=playlist, track=track, created_by=request.user, room=room
+    )
     vote.update_vote(vote_type=-1)
 
-    return render(
-        request,
-        "vote_track.html",
-        {"tracks": tracks, "playlist": playlist, "votes": votes},
-    )
+    return show_user_playlist_tracks(request, playlist_id)
