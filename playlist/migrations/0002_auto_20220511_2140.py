@@ -14,7 +14,7 @@ def move_spotify_playlists(apps, schema_editor):
             room=spotify_playlist.room,
             created_by=spotify_playlist.created_by,
             created_at=spotify_playlist.created_at,
-            playlist_id=spotify_playlist.playlist_id,
+            ext_playlist_id=spotify_playlist.playlist_id,
             playlist_name=spotify_playlist.playlist_name,
         )
 
@@ -27,8 +27,8 @@ def move_spotify_tracks(apps, schema_editor):
 
     for spotify_track in Spotify_Track.objects.all():
         playlist_track = Playlist_Track.objects.create(
-            playlist=spotify_track.playlist,
-            track_id=spotify_track.track_id,
+            playlist_id=spotify_track.playlist,
+            ext_track_id=spotify_track.track_id,
             track_name=spotify_track.track_name,
             track_artist=spotify_track.track_artist,
         )

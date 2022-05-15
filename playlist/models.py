@@ -14,7 +14,7 @@ class Playlist(models.Model):
         CustomUser, related_name="created_playlist", on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    playlist_id = models.CharField(max_length=50)
+    ext_playlist_id = models.CharField(max_length=50)
     playlist_name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -25,7 +25,7 @@ class Track(models.Model):
     playlist = models.ForeignKey(
         Playlist, related_name="tracks", on_delete=models.CASCADE
     )
-    track_id = models.CharField(max_length=50)
+    ext_track_id = models.CharField(max_length=50)
     track_name = models.CharField(max_length=255)
     track_artist = models.CharField(max_length=255)
 
