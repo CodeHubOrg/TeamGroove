@@ -22,25 +22,35 @@ class Vote(models.Model):
         return f" Votes for: {self.room} * {self.playlist} * {self.track}"
 
     def update_vote(self, vote_type):
-        # If the upvote already exists, then unset upvote
-        # If the downvote already exists, then unset downvote
-        # If upvote already exists and then downvote is clicked, unset upvote and set downvote
-        # If downvote already exists and then upvote is clicked, unset downvote and set upvote
-        # If the track in a playlist in a room hasn't
-        # been voted on before by the user then create a vote for it.
-        if self.track_vote == 1:
+        # Voting the same way twice resets the vote
+        # If the user has already voted up...
+        if self.track_vote > 0:
+            # And the user votes up...
             if vote_type == 1:
-                self.track_vote -= 1
+                # Then reset the vote
+                self.track_vote = 0
+            # Otherwise if the user votes down...
             else:
-                self.track_vote -= 2
-        elif self.track_vote == -1:
+                # Then record a down vote
+                self.track_vote = -1
+        # If the user has already voted down...
+        elif self.track_vote < 0:
+            # And the user votes up...
             if vote_type == 1:
-                self.track_vote += 2
+                # Then record an up vote
+                self.track_vote = 1
+            # Otherwise if the user votes down...
             else:
-                self.track_vote += 1
+                # Then reset the vote
+                self.track_vote = 0
+        # Otherwise the user has not voted yet
         else:
+            # So if the user votes up...
             if vote_type == 1:
-                self.track_vote += 1
+                # Record an up vote
+                self.track_vote = 1
+            # So if the user votes down...
             else:
-                self.track_vote -= 1
+                # Record a down vote
+                self.track_vote = -1
         self.save()
