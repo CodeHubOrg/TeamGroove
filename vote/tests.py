@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 from room.models import Room
 from spotify.models import Playlist, Track
@@ -12,18 +12,21 @@ import json
 
 class VoteUnitTests(TestCase):
     def setUp(self):
+        self.client = Client()
+
         # create users
-        self.user1 = CustomUser.objects.create(
+        User = get_user_model()
+        self.user1 = User.objects.create(
             email="test1@example.com",
             first_name="firstname1",
             last_name="lastname1",
         )
-        self.user2 = CustomUser.objects.create(
+        self.user1.save()
+        self.user2 = User.objects.create(
             email="test2@example.com",
             first_name="firstname2",
             last_name="lastname2",
         )
-        self.user1.save()
         self.user2.save()
         # create room
         self.room = Room.objects.create(title="test_room1", created_by=self.user1)
@@ -189,6 +192,40 @@ class VoteUnitTests(TestCase):
         self.assertEqual(votes["Track Name 2"], 0)
 
 
-class PlaceVotesTests(TestCase):
+class VoteViewsTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+        # create users
+        User = get_user_model()
+        self.user1 = User.objects.create(
+            email="vote_view_tests@example.com",
+            first_name="firstname1",
+            last_name="lastname1",
+            password="betterpassword1",
+        )
+
     def test_login_required(self):
-        response = self.client.get("/")
+        response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
+        # Django should redirect to login page as client not logged in
+        self.assertRedirects(
+            response, "/login/?next=/vote/show_user_playlist_tracks/playlist_id1/"
+        )
+
+    def test_invalid_playlist(self):
+        # login
+        self.client.login(
+            email="vote_view_tests@example.com", password="betterpassword1"
+        )
+
+        response = self.client.get("/vote/show_user_playlist_tracks/no_such_playlist/")
+        # Django should redirect to login page as client not logged in
+        self.assertEqual(response.status_code, 404)
+
+    # def test_view_playlist_exists_at_desired_location(self):
+    #     # login
+
+    #     self.client.login(email="test1@example.com", password="betterpassword1")
+
+    #     response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
+    #     self.assertEqual(response.status_code, 200)
