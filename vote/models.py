@@ -16,8 +16,6 @@ class Vote(models.Model):
     created_by = models.ForeignKey(
         CustomUser, related_name="created_by", on_delete=models.CASCADE
     )
-    # Not sure how we are going to handle voting? 0-5 or 0-10, etc. Do we check for the same person voting
-    # multiple times and trying to rig the playlist for their favourite/hated track?
     track_vote = models.IntegerField(default=0)
 
     def __str__(self):
@@ -46,17 +44,3 @@ class Vote(models.Model):
             else:
                 self.track_vote -= 1
         self.save()
-
-    def return_vote_count():
-        votes = {}
-        for track in tracks:
-            # Return the votes for each of the tracks in the playlist for the room.
-            total_votes_track = (
-                Vote.objects.filter(playlist_id=playlist.pk)
-                .filter(track_id=track)
-                .filter(room_id=user.active_room_id)
-                .aggregate(Sum("track_vote"))
-            )
-            votes[track.track_name] = total_votes_track["track_vote__sum"]
-
-        return votes
