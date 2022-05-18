@@ -199,9 +199,9 @@ class VoteViewsTests(TestCase):
 
         user1 = User.objects.create(
             email="vote_view_tests@example.com",
+            password="betterpassword1",
             first_name="firstname1",
             last_name="lastname1",
-            password="betterpassword1",
         )
         user1.save()
 
@@ -241,6 +241,10 @@ class VoteViewsTests(TestCase):
         )
 
     def test_invalid_playlist(self):
+        User = get_user_model()
+
+        user1 = User.objects.filter(email="vote_view_tests@example.com")
+        logger.info("test_invalid_playlist - user1: %s", user1[0])
         # login
         login = self.client.login(
             email="vote_view_tests@example.com", password="betterpassword1"
