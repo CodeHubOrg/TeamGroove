@@ -50,7 +50,6 @@ class AddRoomViewTests(TestCase):
     def test_add_a_room(self):
         # create user and login
         User = get_user_model()
-        self.client = Client()
 
         user = User.objects.create_user(
             email="test_add_a_room@example.com",
@@ -78,7 +77,6 @@ class ActivateRoomViewTests(TestCase):
     def test_activate_room(self):
         # create user and login
         User = get_user_model()
-        self.client = Client()
 
         user = User.objects.create_user(
             email="test_activate_a_room@example.com",
@@ -106,7 +104,6 @@ class EditRoomView(TestCase):
     def test_edit_room_title(self):
         # create user and login
         User = get_user_model()
-        self.client = Client()
 
         user = User.objects.create_user(
             email="test_edit_a_room@example.com",
@@ -139,8 +136,6 @@ class DeleteRoomView(TestCase):
     def test_delete_room(self):
         # create user and login
         User = get_user_model()
-        self.client = Client()
-
         user = User.objects.create_user(
             email="test_delete_a_room@example.com",
             password="betterpassword",
@@ -171,8 +166,6 @@ class InviteToRoomView(TestCase):
     def test_invite_to_room(self):
         # create user and login
         User = get_user_model()
-        self.client = Client()
-
         user = User.objects.create_user(
             email="test_invite_to_room@example.com",
             password="betterpassword",
@@ -205,8 +198,6 @@ class DeleteInviteToRoom(TestCase):
     def test_delete_invite_to_user(self):
         # create user and login
         User = get_user_model()
-        self.client = Client()
-
         user = User.objects.create_user(
             email="test_delete_invite@example.com",
             password="betterpassword",
@@ -243,8 +234,6 @@ class DeleteUserFromRoom(TestCase):
     def test_delete_user_from_room(self):
         # create user and login
         User = get_user_model()
-        self.client = Client()
-
         user = User.objects.create_user(
             email="test_delete_user@example.com",
             password="betterpassword",
