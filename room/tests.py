@@ -257,7 +257,6 @@ class DeleteUserFromRoom(TestCase):
         self.client.logout()
         # Need to logon as DiscoStu so we can accept the invitation.
         User = get_user_model()
-        self.client = Client()
 
         user = User.objects.create_user(
             email="DiscoStu@example.com",
