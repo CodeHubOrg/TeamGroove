@@ -197,41 +197,42 @@ class VoteViewsTests(TestCase):
         # create user
         User = get_user_model()
 
-        user1 = User.objects.create(
+        self.user1 = User.objects.create(
             email="vote_view_tests@example.com",
-            password="betterpassword1",
             first_name="firstname1",
             last_name="lastname1",
         )
-        user1.save()
+        self.user1.set_password("betterpassword1")
+
+        self.user1.save()
 
         # create room
-        room = Room.objects.create(title="test_room1", created_by=user1)
-        room.members.add(user1)
-        room.save()
+        self.room = Room.objects.create(title="test_room1", created_by=self.user1)
+        self.room.members.add(self.user1)
+        self.room.save()
         # create playlist
-        playlist = Playlist.objects.create(
-            room=room,
-            created_by=user1,
+        self.playlist = Playlist.objects.create(
+            room=self.room,
+            created_by=self.user1,
             playlist_id="playlist_id1",
             playlist_name="Playlist 1",
         )
-        playlist.save()
+        self.playlist.save()
         # create track(s)
-        track1 = Track.objects.create(
-            playlist=playlist,
+        self.track1 = Track.objects.create(
+            playlist=self.playlist,
             track_id="track_id1",
             track_name="Track Name 1",
             track_artist="Track Artist 1",
         )
-        track1.save()
-        track2 = Track.objects.create(
-            playlist=playlist,
+        self.track1.save()
+        self.track2 = Track.objects.create(
+            playlist=self.playlist,
             track_id="track_id2",
             track_name="Track Name 2",
             track_artist="Track Artist 2",
         )
-        track2.save()
+        self.track2.save()
 
     def test_login_required(self):
         response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
@@ -241,20 +242,18 @@ class VoteViewsTests(TestCase):
         )
 
     def test_invalid_playlist(self):
-        User = get_user_model()
 
-        user1 = User.objects.filter(email="vote_view_tests@example.com")
-        logger.info("test_invalid_playlist - user1: %s", user1[0])
+        logger.info("test_invalid_playlist - user1: %s", self.user1)
         # login
         login = self.client.login(
-            email="vote_view_tests@example.com", password="betterpassword1"
+            email="vote_view_tests@example.com",
+            password="betterpassword1",
         )
         logger.info("test_invalid_playlist - login: %s", login)
 
         response = self.client.get("/vote/show_user_playlist_tracks/no_such_playlist/")
         # Django should redirect to login page as client not logged in
         self.assertEqual(response.status_code, 404)
-        self.assertTemplateUsed(response, "")
 
     def test_valid_playlist(self):
         # login
@@ -263,7 +262,6 @@ class VoteViewsTests(TestCase):
         )
         logger.info("test_valid_playlist - login: %s", login)
 
-        response = self.client.get("/vote/show_user_playlist_tracks/no_such_playlist/")
-        # Django should redirect to login page as client not logged in
+        response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "user_playlist_tracks.html")
