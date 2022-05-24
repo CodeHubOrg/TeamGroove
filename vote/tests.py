@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from room.models import Room
+from room.models import Room, Invitation
 from spotify.models import Playlist, Track
-from users.models import CustomUser
+
 from .models import Vote
 from .utils import return_vote_count
 
@@ -197,19 +197,42 @@ class VoteViewsTests(TestCase):
         # create user
         User = get_user_model()
 
-        self.user1 = User.objects.create(
-            email="vote_view_tests@example.com",
+        self.user1 = User.objects.create_user(
+            email="vote_view_tests1@example.com",
             first_name="firstname1",
             last_name="lastname1",
+            password="betterpassword1",
         )
-        self.user1.set_password("betterpassword1")
 
         self.user1.save()
+
+        self.user2 = User.objects.create_user(
+            email="vote_view_tests2@example.com",
+            first_name="firstname2",
+            last_name="lastname2",
+            password="betterpassword1",
+        )
+
+        self.user2.save()
 
         # create room
         self.room = Room.objects.create(title="test_room1", created_by=self.user1)
         self.room.members.add(self.user1)
+
+        # activate the room for user1
+        logger.info("Activating room ID %s for user1", self.room.id)
+        self.user1.active_room_id = self.room.id
+        self.user1.save()
+
+        # add user2 to the room
+        self.room.members.add(self.user2)
         self.room.save()
+
+        # activate the room for user2
+        logger.info("Activating room ID %s for user2", self.room.id)
+        self.user2.active_room_id = self.room.id
+        self.user2.save()
+
         # create playlist
         self.playlist = Playlist.objects.create(
             room=self.room,
@@ -246,7 +269,7 @@ class VoteViewsTests(TestCase):
         logger.info("test_invalid_playlist - user1: %s", self.user1)
         # login
         login = self.client.login(
-            email="vote_view_tests@example.com",
+            email="vote_view_tests1@example.com",
             password="betterpassword1",
         )
         logger.info("test_invalid_playlist - login: %s", login)
@@ -258,10 +281,51 @@ class VoteViewsTests(TestCase):
     def test_valid_playlist(self):
         # login
         login = self.client.login(
-            email="vote_view_tests@example.com", password="betterpassword1"
+            email="vote_view_tests1@example.com", password="betterpassword1"
         )
         logger.info("test_valid_playlist - login: %s", login)
 
         response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "user_playlist_tracks.html")
+        self.assertTemplateUsed(response, "vote_track.html")
+        logger.info("Votes: %s", response.context["votes"])
+
+        self.assertEqual(response.context["votes"]["Track Name 1"], None)
+        self.assertEqual(response.context["votes"]["Track Name 2"], None)
+
+    def test_multiple_user_vote_for_track(self):
+        # login user1
+        login = self.client.login(
+            email="vote_view_tests1@example.com", password="betterpassword1"
+        )
+        logger.info("test_valid_playlist - login: %s", login)
+
+        # Vote up for first track
+        response = self.client.get("/vote/up_vote/playlist_id1/track_id1/")
+        self.assertEqual(response.status_code, 200)
+
+        # Vote down for second track
+        response = self.client.get("/vote/down_vote/playlist_id1/track_id2/")
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+        # login user2
+        login = self.client.login(
+            email="vote_view_tests2@example.com", password="betterpassword1"
+        )
+        logger.info("test_valid_playlist - login: %s", login)
+
+        # Vote up for first track
+        response = self.client.get("/vote/up_vote/playlist_id1/track_id1/")
+        self.assertEqual(response.status_code, 200)
+
+        # Vote down for second track
+        response = self.client.get("/vote/down_vote/playlist_id1/track_id2/")
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
+        self.assertEqual(response.status_code, 200)
+        logger.info("Votes: %s", response.context["votes"])
+
+        self.assertEqual(response.context["votes"]["Track Name 1"], 2)
+        self.assertEqual(response.context["votes"]["Track Name 2"], -2)
