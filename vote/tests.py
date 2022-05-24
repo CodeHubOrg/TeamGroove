@@ -197,65 +197,61 @@ class VoteViewsTests(TestCase):
         # create user
         User = get_user_model()
 
-        self.user1 = User.objects.create_user(
+        user1 = User.objects.create_user(
             email="vote_view_tests1@example.com",
             first_name="firstname1",
             last_name="lastname1",
             password="betterpassword1",
         )
 
-        self.user1.save()
+        # create room
+        room = Room.objects.create(title="test_room1", created_by=user1)
+        room.members.add(user1)
 
-        self.user2 = User.objects.create_user(
+        # activate the room for user1
+        logger.info("Activating room ID %s for user1", room.id)
+        user1.active_room_id = room.id
+        user1.save()
+
+        user2 = User.objects.create_user(
             email="vote_view_tests2@example.com",
             first_name="firstname2",
             last_name="lastname2",
             password="betterpassword1",
         )
 
-        self.user2.save()
-
-        # create room
-        self.room = Room.objects.create(title="test_room1", created_by=self.user1)
-        self.room.members.add(self.user1)
-
-        # activate the room for user1
-        logger.info("Activating room ID %s for user1", self.room.id)
-        self.user1.active_room_id = self.room.id
-        self.user1.save()
+        # activate the room for user2
+        logger.info("Activating room ID %s for user2", room.id)
+        user2.active_room_id = room.id
+        user2.save()
 
         # add user2 to the room
-        self.room.members.add(self.user2)
-        self.room.save()
-
-        # activate the room for user2
-        logger.info("Activating room ID %s for user2", self.room.id)
-        self.user2.active_room_id = self.room.id
-        self.user2.save()
+        room.members.add(user2)
+        room.save()
 
         # create playlist
-        self.playlist = Playlist.objects.create(
-            room=self.room,
-            created_by=self.user1,
+        playlist = Playlist.objects.create(
+            room=room,
+            created_by=user1,
             playlist_id="playlist_id1",
             playlist_name="Playlist 1",
         )
-        self.playlist.save()
+        playlist.save()
         # create track(s)
-        self.track1 = Track.objects.create(
-            playlist=self.playlist,
+        track1 = Track.objects.create(
+            playlist=playlist,
             track_id="track_id1",
             track_name="Track Name 1",
             track_artist="Track Artist 1",
         )
-        self.track1.save()
-        self.track2 = Track.objects.create(
-            playlist=self.playlist,
+        track1.save()
+        track2 = Track.objects.create(
+            playlist=playlist,
             track_id="track_id2",
             track_name="Track Name 2",
             track_artist="Track Artist 2",
         )
-        self.track2.save()
+        track2.save()
 
     def test_login_required(self):
         response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
@@ -266,7 +262,6 @@ class VoteViewsTests(TestCase):
 
     def test_invalid_playlist(self):
 
-        logger.info("test_invalid_playlist - user1: %s", self.user1)
         # login
         login = self.client.login(
             email="vote_view_tests1@example.com",
@@ -279,11 +274,11 @@ class VoteViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_valid_playlist(self):
+
         # login
         login = self.client.login(
             email="vote_view_tests1@example.com", password="betterpassword1"
         )
-        logger.info("test_valid_playlist - login: %s", login)
 
         response = self.client.get("/vote/show_user_playlist_tracks/playlist_id1/")
         self.assertEqual(response.status_code, 200)
@@ -295,10 +290,9 @@ class VoteViewsTests(TestCase):
 
     def test_multiple_user_vote_for_track(self):
         # login user1
-        login = self.client.login(
+        self.client.login(
             email="vote_view_tests1@example.com", password="betterpassword1"
         )
-        logger.info("test_valid_playlist - login: %s", login)
 
         # Vote up for first track
         response = self.client.get("/vote/up_vote/playlist_id1/track_id1/")
@@ -310,10 +304,9 @@ class VoteViewsTests(TestCase):
         self.client.logout()
 
         # login user2
-        login = self.client.login(
+        self.client.login(
             email="vote_view_tests2@example.com", password="betterpassword1"
         )
-        logger.info("test_valid_playlist - login: %s", login)
 
         # Vote up for first track
         response = self.client.get("/vote/up_vote/playlist_id1/track_id1/")
