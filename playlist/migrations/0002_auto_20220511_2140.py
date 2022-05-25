@@ -11,7 +11,6 @@ def move_spotify_playlists(apps, schema_editor):
     Spotify_Track = apps.get_model("spotify", "Track")
     Playlist_Playlist = apps.get_model("playlist", "Playlist")
     Playlist_Track = apps.get_model("playlist", "Track")
-    Vote = apps.get_model("Vote", "Vote")
 
     # Migrate each playlist
     for spotify_playlist in Spotify_Playlist.objects.all():
