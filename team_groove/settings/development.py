@@ -1,6 +1,7 @@
 """ Set up environment variables for Team Groove applications specific to production environment"""
 import os
 import environ
+import logging
 
 from .base import *
 
@@ -21,3 +22,5 @@ SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
     default="y1JCaLAyeDI0M48NZox7oDkGEs2979bLBd5P6J2e5FrqT24qS8PdIGNKsGkTc4Rt",
 )
+
+logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
