@@ -25,3 +25,19 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 SECURE_BROWSER_XSS_FILTER = True
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "verbose": {"format": "%(asctime)s %(levelname)s %(module)s %(message)s"}
+    },
+    "handlers": {
+        "console": {
+            "level": "WARNING",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        }
+    },
+    "root": {"level": "ERROR", "handlers": ["console"]},
+}
