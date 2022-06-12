@@ -46,8 +46,8 @@ from spotify.views import (
 
 from vote.views import (
     show_user_playlist_tracks,
-    spotify_up_vote,
-    spotify_down_vote,
+    up_vote,
+    down_vote,
 )
 
 urlpatterns = [
@@ -111,14 +111,14 @@ urlpatterns = [
         name="show_user_playlist_tracks",
     ),
     path(
-        "vote/spotify_up_vote/<playlist_id>/<track_id>/",
-        spotify_up_vote,
-        name="spotify_up_vote",
+        "vote/up_vote/<playlist_id>/<track_id>/",
+        up_vote,
+        name="up_vote",
     ),
     path(
-        "vote/spotify_down_vote/<playlist_id>/<track_id>/",
-        spotify_down_vote,
-        name="spotify_down_vote",
+        "vote/down_vote/<playlist_id>/<track_id>/",
+        down_vote,
+        name="down_vote",
     ),
     path("signup/", signup, name="signup"),
     path(
