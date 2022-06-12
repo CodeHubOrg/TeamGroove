@@ -14,8 +14,6 @@ class Vote(models.Model):
     created_by = models.ForeignKey(
         CustomUser, related_name="created_by", on_delete=models.CASCADE
     )
-    # Not sure how we are going to handle voting? 0-5 or 0-10, etc. Do we check for the same person voting
-    # multiple times and trying to rig the playlist for their favourite/hated track?
     track_vote = models.IntegerField(default=0)
 
     def __str__(self):
