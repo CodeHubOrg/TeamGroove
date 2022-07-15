@@ -39,17 +39,25 @@
     <hr>
 {% endif %}
 
+<div class="col-md-12 d-flex">
+    <div class="card mb-2 flex-fill">
+            <a href="{% url 'add_room' %}" class="btn btn-info btn-block"><i class="fa fa-users" aria-hidden="true"></i>  Create a New Room</a>
+    </div>
+</div>
+
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-4 d-flex">
+        <div class="col-md-12 d-flex">
             <div class="card mb-2 flex-fill">
                 <div class="card-header">
                     <h5>Current Active Room --></h5>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row">
         {% if active_room %}
-            <div class="col-md-4 d-flex">
+            <div class="col-md-12 d-flex">
                 <div class="card mb-2 flex-fill">
                     <div class="card-header">
                         <h5>{{ active_room.title }}</h5>
@@ -71,18 +79,6 @@
                 </div>
             </div>
         {% endif %}
-        <div class="col-md-4 d-flex">
-            <div class="card mb-2 flex-fill">
-                <div class="card-header">
-                    <h5>Create a New Room</h5>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title"></h5>
-                    <p class="card-text"></p>
-                </div>
-                <a href="{% url 'add_room' %}" class="btn btn-info btn-block"><i class="fa fa-users" aria-hidden="true"></i>  Create a New Room</a>
-            </div>
-        </div>
     </div>
 </div>
 <hr>
