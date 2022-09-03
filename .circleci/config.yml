@@ -30,8 +30,8 @@ jobs:
             sudo apt install python3 python3-distutils curl -y
             # This is the recommended way to install poetry, from https://python-poetry.org/docs/.
             curl -sSL https://install.python-poetry.org | python3 -
-            # Use this script installed by the above line to modify the $PATH so poetry works properly.
-            source $HOME/.local/bin
+            # Add poetry to $PATH.
+            export PATH="$HOME/.local/bin:$PATH"
             # Now set up the packages required by the pyproject.toml file.
             poetry install
             # Do we have a working installation? Try running the unit tests.
