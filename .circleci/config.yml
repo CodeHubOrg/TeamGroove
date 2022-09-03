@@ -8,16 +8,16 @@ orbs:
   python: circleci/python@1.2
 
 workflows:
-  mainflow:  # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run. 
-    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
+  mainflow: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
+    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
     jobs:
       - build-from-scratch
       - build-and-test
       - trial-run
 
 jobs:
-  build-from-scratch:  # This job illustrates what is required to get TeamGroove running from a relatively minimal system.
+  build-from-scratch: # This job illustrates what is required to get TeamGroove running from a relatively minimal system.
     docker:
       - image: cimg/base:2021.04
     steps:
@@ -29,7 +29,7 @@ jobs:
             sudo apt update
             sudo apt install python3 python3-distutils curl -y
             # This is the recommended way to install poetry, from https://python-poetry.org/docs/.
-            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+            curl -sSL https://install.python-poetry.org | python3 -
             # Use this script installed by the above line to modify the $PATH so poetry works properly.
             source $HOME/.poetry/env
             # Now set up the packages required by the pyproject.toml file.
@@ -63,7 +63,7 @@ jobs:
       - image: cimg/python:3.8
     steps:
       - checkout
-      - python/install-packages:  
+      - python/install-packages:
           pkg-manager: poetry
       - run:
           command: |
@@ -74,5 +74,3 @@ jobs:
             poetry run python3 manage.py migrate
             poetry run python3 manage.py createsuperuser --noinput
             timeout --preserve-status 10 poetry run python3 manage.py runserver 8081
-          
-     
