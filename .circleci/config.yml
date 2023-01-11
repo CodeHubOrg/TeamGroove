@@ -37,7 +37,7 @@ jobs:
             poetry --version
             pwd 
             ls
-            poetry install
+            poetry install -q
             echo 'Install done'
             # Do we have a working installation? Try running the unit tests.
             mkdir -p test-results
