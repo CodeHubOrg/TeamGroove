@@ -19,7 +19,7 @@ workflows:
 jobs:
   build-from-scratch: # This job illustrates what is required to get TeamGroove running from a relatively minimal system.
     docker:
-      - image: cimg/base:2021.04
+      - image: cimg/base:2023.01
     steps:
       - checkout
       - run:
