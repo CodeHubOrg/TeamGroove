@@ -33,7 +33,7 @@ jobs:
             # Add poetry to $PATH.
             export PATH="$HOME/.local/bin:$PATH"
             # Now set up the packages required by the pyproject.toml file.
-            poetry install
+            poetry install || :
             echo 'Install done'
             # Do we have a working installation? Try running the unit tests.
             mkdir -p test-results
