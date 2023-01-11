@@ -28,6 +28,7 @@ jobs:
             # Use apt update to ensure that apt finds the packages we want to install
             sudo apt update
             sudo apt install python3 python3-distutils curl -y
+            python -V
             # This is the recommended way to install poetry, from https://python-poetry.org/docs/.
             curl -sSL https://install.python-poetry.org | python3 -
             # Add poetry to $PATH.
