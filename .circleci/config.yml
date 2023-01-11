@@ -39,6 +39,8 @@ jobs:
             poetry run python manage.py test
       - store_test_results:
           path: test-results
+    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
+    resource_class: large
   build-and-test:
     docker:
       - image: cimg/python:3.8
