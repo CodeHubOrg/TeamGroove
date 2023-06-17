@@ -6,8 +6,8 @@ authors = ["stiffneckjim <22213990+stiffneckjim@users.noreply.github.com>"]
 license = "GNU General Public License v3.0"
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
-requests = "^2.25.1"
+python = "^3.8"
+requests = "^2.31.0"
 spotipy = "^2.18"
 Django = "3.2.15"
 django-environ = "^0.4.5"
@@ -24,3 +24,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pyright]
 exclude = [".env", "env.example"]
+
