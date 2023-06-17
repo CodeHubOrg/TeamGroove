@@ -8,7 +8,7 @@ license = "GNU General Public License v3.0"
 [tool.poetry.dependencies]
 python = "^3.6.2"
 requests = "^2.25.1"
-spotipy = "^2.18"
+spotipy = "^2.22"
 Django = "3.2.15"
 django-environ = "^0.4.5"
 unittest-xml-reporting = "^3.0.4"
