@@ -30,7 +30,7 @@ This project is being run as part of the
 part of
 [Workshop Wednesdays](https://www.meetup.com/Womens-Tech-Hub-Bristol/), so if
 you'd like to join please sign up. If you'd like to chat with us, please join
-the [Bristol Code Hub Slack](http://slack.codehub.org.uk/) and introduce
+the [CodeHub Discord server](https://discord.gg/d2HW3Jn) and introduce
 yourself.
 
 ## Getting Started
